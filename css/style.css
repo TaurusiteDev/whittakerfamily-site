@@ -1,0 +1,57 @@
+/* Apply a warm background and soft typography */
+body {
+  font-family: 'Georgia', serif;
+  background-color: #fdf7f1;
+  color: #4a3b2d;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* Center and style header */
+header {
+  background-color: #e9d7b7;
+  text-align: center;
+  padding: 1.5rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Navigation links */
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #4a3b2d;
+  font-weight: bold;
+}
+
+nav a:hover {
+  color: #7b5e3b;
+}
+
+/* Intro section */
+.intro {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: #fffaf5;
+  border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+}
+
+footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 1rem;
+  font-size: 0.9rem;
+  background-color: #e9d7b7;
+}
