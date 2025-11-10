@@ -55,3 +55,67 @@ footer {
   font-size: 0.9rem;
   background-color: #e9d7b7;
 }
+
+/* ===== GALLERY PAGE STYLES ===== */
+
+.gallery {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.gallery h2 {
+  color: #4a3b2d;
+  margin-bottom: 0.5rem;
+}
+
+.gallery p {
+  color: #6b5848;
+  margin-bottom: 2rem;
+}
+
+/* Grid layout for polaroids */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Polaroid style */
+.polaroid {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.15);
+  padding: 10px 10px 35px 10px; /* extra bottom padding for caption */
+  border-radius: 4px;
+  transform: rotate(var(--tilt, 0deg));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.polaroid:hover {
+  transform: scale(1.03) rotate(var(--tilt, 0deg));
+  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.25);
+}
+
+.polaroid img {
+  width: 100%;
+  height: auto;
+  border-radius: 2px;
+}
+
+.caption {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #5a4a3b;
+  font-style: italic;
+}
+
+/* Add random tilt for variety */
+.polaroid:nth-child(odd) {
+  --tilt: -2deg;
+}
+.polaroid:nth-child(even) {
+  --tilt: 2deg;
+}
