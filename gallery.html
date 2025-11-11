@@ -1,44 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Family Gallery | The Whittaker Family</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whittaker Family Gallery</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <header>
-    <h1>The Whittaker Family</h1>
+    <h1>Whittaker Family Gallery</h1>
     <nav>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="gallery.html" class="active">Gallery</a></li>
-        <li><a href="family-tree.html">Family Tree</a></li>
-      </ul>
+      <a href="index.html">Home</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="familytree.html">Family Tree</a>
     </nav>
   </header>
 
   <main>
-    <section class="gallery">
-      <h2>Family Gallery</h2>
-      <p>A collection of our favourite memories — framed like the polaroids they deserve to be 📸</p>
+    <!-- Upload Section -->
+<section class="upload-form">
+  <h2>Upload a Family Photo</h2>
+  <input type="file" id="photo-upload" accept="image/*" />
+  <input type="text" id="photo-caption" placeholder="Add a caption..." />
+  <button id="upload-btn">Upload</button>
 
-<div class="gallery-grid">
-  <div class="polaroid">
-    <img src="images/parents1.jpg" alt="Mum and Dad">
-    <div class="caption">Mum & Dad</div>
-  </div>
-
-  <div class="polaroid">
-    <img src="images/siblings1.jpg" alt="Siblings together">
-    <div class="caption">The Whittaker Siblings</div>
-  </div>
-
-  <div class="polaroid">
-    <img src="images/siblings2.jpg" alt="Another siblings photo">
-    <div class="caption">Another happy day</div>
+  <!-- Preview Modal -->
+<div id="preview-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2>Preview Your Photo</h2>
+    <div id="modal-preview" class="polaroid" style="margin:1rem auto;"></div>
+    <input type="text" id="modal-caption" placeholder="Add a caption..." />
+    <button id="confirm-upload">Confirm Upload</button>
   </div>
 </div>
 
+  <!-- Preview area -->
+  <div id="preview-area" class="gallery" style="margin-top: 2rem;"></div>
+</section>
 
-          
+
+    <!-- Gallery Display -->
+    <div id="gallery" class="gallery"></div>
+  </main>
+
+  <footer>
+    <p>© 2025 The Whittaker Family</p>
+  </footer>
+
+  <!-- Firebase setup + gallery logic -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } 
+    from "https://www.gstatic.com/firebasejs/12.5.0/firebase-storage.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query } 
+    from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
+
+  // --- Firebase config ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyCCiuOgFy03gCcjZq9bQtSuROboGC73Epg",
+    authDomain: "whittaker-family-site.firebaseapp.com",
+    projectId: "whittaker-family-site",
+    storageBucket: "whittaker-family-site.firebasestorage.app",
+    messagingSenderId: "877721052023",
+    appId: "1:877721052023:web:7389de5342ec421a147772"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const storage = getStorage(app);
+  const db = getFirestore(app);
+
+  // --- Match HTML IDs correctly ---
+  const uploadBtn = document.getElementById('upload-btn');
+  const photoInput = document.getElementById('photo-upload');
+  const captionInput = document.getElementById('photo-caption');
+  const galleryEl = document.getElementById('gallery');
+  const statusEl = document.createElement('p');
+  document.querySelector('.upload-form').appendChild(statusEl);
+
+  // --- Load gallery from Firestore ---
+  async function loadGallery() {
+    galleryEl.innerHTML = '';
+    const q = query(collection(db, "photos"), orderBy("timestamp", "desc"));
+    const snapshot = await getDocs(q);
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      const item = document.createElement('div');
+      item.classList.add('polaroid');
+      item.innerHTML = `
+        <img src="${data.url}" alt="${data.caption || 'Family photo'}">
+        <p>${data.caption || ''}</p>
+      `;
+      galleryEl.appendChild(item);
+    });
+  }
+
+  // --- Upload handler ---
+  uploadBtn.addEventListener('click', async () => {
+    const file = photoInput.files[0];
+    const caption = captionInput.value.trim();
+    if (!file) return (statusEl.textContent = "Please choose a photo first.");
+
+    statusEl.textContent = "Uploading...";
+    try {
+      const fileRef = ref(storage, 'gallery/' + file.name);
+      await uploadBytes(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+
+      await addDoc(collection(db, "photos"), {
+        caption: caption || "Untitled",
+        url: url,
+        timestamp: Date.now()
+      });
+
+      statusEl.textContent = "✅ Upload successful!";
+      photoInput.value = "";
+      captionInput.value = "";
+      loadGallery();
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = "❌ Upload failed: " + err.message;
+    }
+  });
+
+  loadGallery();
+</script>
+
+
+ <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const uploadInput = document.getElementById("photo-upload");
+  const modal = document.getElementById("preview-modal");
+  const modalPreview = document.getElementById("modal-preview");
+  const modalCaption = document.getElementById("modal-caption");
+  const confirmBtn = document.getElementById("confirm-upload");
+  const closeBtn = document.querySelector(".close-btn");
+
+  let selectedFile = null;
+
+  // Open modal when photo selected
+  uploadInput.addEventListener("change", () => {
+    const file = uploadInput.files[0];
+    if (!file) return;
+    selectedFile = file;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      modalPreview.innerHTML = `
+        <img src="${e.target.result}" alt="Preview" />
+        <p class="caption">Add caption below</p>
+      `;
+      modal.style.display = "flex";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Close modal
+  closeBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+    uploadInput.value = "";
+  });
+
+  // Close modal if click outside
+  window.addEventListener("click", (e) => {
+    if (e.target === modal) {
+      modal.style.display = "none";
+      uploadInput.value = "";
+    }
+  });
+
+  // Live caption update
+  modalCaption.addEventListener("input", () => {
+    const captionElem = modalPreview.querySelector(".caption");
+    if (captionElem) captionElem.textContent = modalCaption.value || "Add caption below";
+  });
+
+  // Confirm upload -> trigger Firebase upload
+  confirmBtn.addEventListener("click", async () => {
+    const captionInput = document.getElementById("photo-caption");
+    captionInput.value = modalCaption.value;
+    modal.style.display = "none";
+
+    // Optional: programmatically click upload button
+    document.getElementById("upload-btn").click();
+  });
+});
+</script>
+
+
+
+</body>
+</html>

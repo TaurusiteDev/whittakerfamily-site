@@ -119,3 +119,64 @@ footer {
 .polaroid:nth-child(even) {
   --tilt: 2deg;
 }
+
+/* ===== Modal Styles ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff8e1;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+  color: #5e503f;
+  cursor: pointer;
+}
+
+#modal-caption {
+  width: 90%;
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #c2a878;
+}
+
+#confirm-upload {
+  background-color: #c2a878;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+#confirm-upload:hover {
+  background-color: #a9865c;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
