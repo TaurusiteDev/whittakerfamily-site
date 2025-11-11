@@ -23,18 +23,23 @@
   <h2>Upload a Family Photo</h2>
   <input type="file" id="photo-upload" accept="image/*" />
   <input type="text" id="photo-caption" placeholder="Add a caption..." />
-  <button id="upload-btn">Upload</button>
+  <button id="preview-btn">Preview</button>
+  <button id="upload-btn" style="display:none;">Hidden Upload Button</button>
+</section>
 
-  <!-- Preview Modal -->
+
+<!-- 🪟 Modal Preview -->
 <div id="preview-modal" class="modal">
   <div class="modal-content">
-    <span class="close-btn">&times;</span>
-    <h2>Preview Your Photo</h2>
-    <div id="modal-preview" class="polaroid" style="margin:1rem auto;"></div>
-    <input type="text" id="modal-caption" placeholder="Add a caption..." />
-    <button id="confirm-upload">Confirm Upload</button>
+    <span id="close-modal" class="close">&times;</span>
+    <div id="preview-frame" class="polaroid"></div>
+    <div class="modal-actions">
+      <button id="confirm-upload">Confirm Upload</button>
+      <button id="cancel-upload">Cancel</button>
+    </div>
   </div>
 </div>
+
 
   <!-- Preview area -->
   <div id="preview-area" class="gallery" style="margin-top: 2rem;"></div>
@@ -57,7 +62,7 @@
   import { getFirestore, collection, addDoc, getDocs, orderBy, query } 
     from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
 
-  // --- Firebase config ---
+  // ✅ Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyCCiuOgFy03gCcjZq9bQtSuROboGC73Epg",
     authDomain: "whittaker-family-site.firebaseapp.com",
@@ -67,65 +72,71 @@
     appId: "1:877721052023:web:7389de5342ec421a147772"
   };
 
+  // 🔧 Initialize Firebase services
   const app = initializeApp(firebaseConfig);
   const storage = getStorage(app);
   const db = getFirestore(app);
 
-  // --- Match HTML IDs correctly ---
-  const uploadBtn = document.getElementById('upload-btn');
-  const photoInput = document.getElementById('photo-upload');
-  const captionInput = document.getElementById('photo-caption');
-  const galleryEl = document.getElementById('gallery');
-  const statusEl = document.createElement('p');
-  document.querySelector('.upload-form').appendChild(statusEl);
+  // 🎯 DOM elements
+  const uploadBtn = document.getElementById("upload-btn");
+  const photoInput = document.getElementById("photo-upload");
+  const captionInput = document.getElementById("photo-caption");
+  const galleryEl = document.getElementById("gallery");
 
-  // --- Load gallery from Firestore ---
+  // 🖼️ Load gallery images from Firestore
   async function loadGallery() {
-    galleryEl.innerHTML = '';
+    galleryEl.innerHTML = "";
     const q = query(collection(db, "photos"), orderBy("timestamp", "desc"));
     const snapshot = await getDocs(q);
-    snapshot.forEach(doc => {
+
+    snapshot.forEach((doc) => {
       const data = doc.data();
-      const item = document.createElement('div');
-      item.classList.add('polaroid');
+      const item = document.createElement("div");
+      item.classList.add("polaroid");
       item.innerHTML = `
-        <img src="${data.url}" alt="${data.caption || 'Family photo'}">
-        <p>${data.caption || ''}</p>
+        <img src="${data.url}" alt="${data.caption || "Family Photo"}" />
+        <p>${data.caption || ""}</p>
       `;
       galleryEl.appendChild(item);
     });
   }
 
-  // --- Upload handler ---
-  uploadBtn.addEventListener('click', async () => {
+  // ☁️ Upload a new photo to Firebase Storage and Firestore
+  uploadBtn.addEventListener("click", async () => {
     const file = photoInput.files[0];
     const caption = captionInput.value.trim();
-    if (!file) return (statusEl.textContent = "Please choose a photo first.");
+    if (!file) {
+      alert("Please choose a file before uploading!");
+      return;
+    }
 
-    statusEl.textContent = "Uploading...";
     try {
-      const fileRef = ref(storage, 'gallery/' + file.name);
+      // Upload image to Firebase Storage
+      const fileRef = ref(storage, `gallery/${file.name}`);
       await uploadBytes(fileRef, file);
       const url = await getDownloadURL(fileRef);
 
+      // Save metadata in Firestore
       await addDoc(collection(db, "photos"), {
         caption: caption || "Untitled",
         url: url,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
-      statusEl.textContent = "✅ Upload successful!";
+      alert("✅ Upload successful!");
       photoInput.value = "";
       captionInput.value = "";
       loadGallery();
     } catch (err) {
       console.error(err);
-      statusEl.textContent = "❌ Upload failed: " + err.message;
+      alert("❌ Upload failed: " + err.message);
     }
   });
 
+  // 🚀 Load existing gallery images on page load
   loadGallery();
 </script>
+
 
 
  <script>
@@ -188,6 +199,54 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const previewBtn = document.getElementById("preview-btn");
+  const photoInput = document.getElementById("photo-upload");
+  const captionInput = document.getElementById("photo-caption");
+  const modal = document.getElementById("preview-modal");
+  const previewFrame = document.getElementById("preview-frame");
+  const closeModal = document.getElementById("close-modal");
+  const confirmUpload = document.getElementById("confirm-upload");
+  const cancelUpload = document.getElementById("cancel-upload");
+
+  // Show modal preview
+  previewBtn.addEventListener("click", () => {
+    const file = photoInput.files[0];
+    const caption = captionInput.value.trim() || "Your caption here";
+
+    if (!file) {
+      alert("Please choose a photo first.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      previewFrame.innerHTML = `
+        <img src="${e.target.result}" alt="Preview" />
+        <p>${caption}</p>
+      `;
+      modal.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Close modal actions
+  closeModal.onclick = () => modal.style.display = "none";
+  cancelUpload.onclick = () => modal.style.display = "none";
+
+  // Confirm upload (trigger existing Firebase upload)
+  confirmUpload.addEventListener("click", () => {
+    modal.style.display = "none";
+    document.getElementById("upload-btn").click(); // uses your existing upload handler
+  });
+
+  // Close when clicking outside modal
+  window.onclick = (event) => {
+    if (event.target === modal) modal.style.display = "none";
+  };
+});
+</script>
 
 
 </body>
