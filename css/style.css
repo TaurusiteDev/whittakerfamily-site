@@ -1,6 +1,5 @@
-/* Apply a warm background and soft typography */
 body {
-  font-family: 'Georgia', serif;
+  font-family: Georgia, serif;
   background-color: #fdf7f1;
   color: #4a3b2d;
   margin: 0;
@@ -8,7 +7,18 @@ body {
   line-height: 1.6;
 }
 
-/* Center and style header */
+/* Ensure footer stays at bottom of page */
+html, body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* pushes footer to bottom when content is short */
+}
+
+/* Header + Nav */
 header {
   background-color: #e9d7b7;
   text-align: center;
@@ -16,133 +26,162 @@ header {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-/* Navigation links */
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-nav li {
-  display: inline-block;
-  margin: 0 15px;
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 1.5rem 0;
 }
 
 nav a {
   text-decoration: none;
   color: #4a3b2d;
   font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 nav a:hover {
+  background-color: #f2e6d9;
   color: #7b5e3b;
 }
 
-/* Intro section */
-.intro {
-  max-width: 600px;
-  margin: 2rem auto;
-  padding: 1rem;
-  background: #fffaf5;
-  border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.05);
+nav a.active-link {
+  text-decoration: underline;
+  color: #7b5e3b;
 }
 
-footer {
-  text-align: center;
-  margin-top: 3rem;
-  padding: 1rem;
-  font-size: 0.9rem;
-  background-color: #e9d7b7;
+/* Gallery container + perspective wrapper */
+.gallery-wrapper {
+  perspective: 1000px;
 }
-
-/* ===== GALLERY PAGE STYLES ===== */
 
 .gallery {
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-.gallery h2 {
-  color: #4a3b2d;
-  margin-bottom: 0.5rem;
-}
-
-.gallery p {
-  color: #6b5848;
-  margin-bottom: 2rem;
-}
-
-/* Grid layout for polaroids */
-.gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   justify-items: center;
+  margin: 2rem auto;
   max-width: 1000px;
-  margin: 0 auto;
+  padding: 0 1rem;
 }
 
-/* Polaroid style */
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Polaroid styling */
 .polaroid {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.15);
-  padding: 10px 10px 35px 10px; /* extra bottom padding for caption */
-  border-radius: 4px;
-  transform: rotate(var(--tilt, 0deg));
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  width: 220px;
+  padding: 10px;
+  text-align: center;
+  transform: rotate(var(--tilt, 0deg)) translateZ(0);
+  transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-style: preserve-3d;
+  cursor: pointer;
+  overflow: hidden;
 }
 
+/* Distinct cozy scatter tilts */
+/* Noticeably scattered tilt angles for authentic photo feel */
+.polaroid:nth-child(5n+1) { --tilt: -14deg; }
+.polaroid:nth-child(5n+2) { --tilt: 9deg; }
+.polaroid:nth-child(5n+3) { --tilt: -12deg; }
+.polaroid:nth-child(5n+4) { --tilt: 16deg; }
+.polaroid:nth-child(5n+5) { --tilt: -9deg; }
+
+
+
+/* Hover animation: lift, tilt, and pop */
 .polaroid:hover {
-  transform: scale(1.03) rotate(var(--tilt, 0deg));
-  box-shadow: 4px 6px 14px rgba(0, 0, 0, 0.25);
+  transform:
+    rotateX(6deg)     /* smaller backward tilt */
+    rotateY(-3deg)    /* smaller sideways tilt */
+    translateY(-12px) /* lifts less */
+    scale(1.07);      /* pops a bit less */
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+  z-index: 10;
 }
 
+
+/* Consistent photo size inside */
 .polaroid img {
   width: 100%;
-  height: auto;
-  border-radius: 2px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  pointer-events: none;
 }
 
-.caption {
-  margin-top: 8px;
-  font-size: 0.9rem;
-  color: #5a4a3b;
-  font-style: italic;
-}
 
-/* Add random tilt for variety */
-.polaroid:nth-child(odd) {
-  --tilt: -2deg;
-}
-.polaroid:nth-child(even) {
-  --tilt: 2deg;
-}
 
-/* ===== Modal Styles ===== */
+/* Modal */
 .modal {
   display: none;
   position: fixed;
   z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.6);
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
   justify-content: center;
   align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+  backdrop-filter: blur(6px);
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: auto;
+  display: flex;
 }
 
 .modal-content {
-  background-color: #fff8e1;
+  background: rgba(255,255,255,0.96);
   border-radius: 12px;
-  padding: 2rem;
-  max-width: 400px;
+  padding: 1.5rem;
+  max-width: 420px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  animation: fadeIn 0.3s ease;
+  transform: translateY(-25px) scale(0.95);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal.active .modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 250px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  object-fit: cover;
+}
+
+#modal-caption {
+  width: 90%;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #c2a878;
+  font-size: 0.9rem;
 }
 
 .close-btn {
@@ -154,72 +193,17 @@ footer {
   cursor: pointer;
 }
 
-#modal-caption {
-  width: 90%;
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  border: 1px solid #c2a878;
-}
-
-#confirm-upload {
-  background-color: #c2a878;
-  color: white;
-  border: none;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 1rem;
-}
-
-#confirm-upload:hover {
-  background-color: #a9865c;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-/* ========== Modal Styles ========== */
-.modal {
-  display: none; 
-  position: fixed;
-  z-index: 999;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.modal-content {
-  background-color: #fffdf7;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 16px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  text-align: center;
-}
-
-.close {
-  float: right;
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-}
-
 .modal-actions {
   margin-top: 1rem;
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .modal-actions button {
+  flex: 1 1 40%;
+  min-width: 120px;
   padding: 10px 20px;
   border: none;
   border-radius: 8px;
@@ -234,16 +218,46 @@ footer {
   background-color: #ff9f00;
 }
 
-.polaroid {
-  background: white;
-  border: 1px solid #ddd;
-  padding: 10px 10px 25px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-  margin-bottom: 1rem;
+.spinner {
+  text-align: center;
+  margin-top: 1rem;
 }
 
-.polaroid img {
+.loader {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #555;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) rotate(var(--tilt, 0deg));
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(var(--tilt, 0deg));
+  }
+}
+
+/* ===== FOOTER LAYOUT ===== */
+footer {
+  text-align: center;
+  background-color: #e9d7b7;
+  color: #4a3b2d;
+  font-size: 0.9rem;
+  padding: 1rem 0;
+  margin-top: auto;
   width: 100%;
-  height: auto;
-  border-radius: 4px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
