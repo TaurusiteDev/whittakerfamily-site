@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Whittaker Family Gallery</title>
   <link rel="stylesheet" href="css/style.css" />
+  <!-- Image compression library -->
+  <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </head>
 
 <body>
@@ -18,39 +20,56 @@
   </header>
 
   <main>
+    <!-- Upload Form -->
     <section class="upload-form">
       <h2>Upload a Family Photo</h2>
-      <input type="file" id="image-upload" accept="image/*" />
+      <input type="file" id="photo-upload" accept="image/*" />
       <input type="text" id="photo-caption" placeholder="Add a caption..." />
       <button id="open-modal-btn">Preview & Upload</button>
     </section>
 
-    <!-- Gallery Display -->
-<div class="gallery-wrapper">
-  <div id="gallery" class="gallery"></div>
-</div>
+    <!-- Admin / Gallery Controls -->
+    <section class="gallery-controls">
+      <button id="admin-mode-btn" class="admin-btn lock-btn">🔒</button>
+    </section>
 
+    <!-- Gallery Display -->
+    <div class="gallery-wrapper">
+      <div id="gallery" class="gallery"></div>
+    </div>
   </main>
 
-  <!-- Modal -->
+  <!-- Upload Modal -->
   <div id="preview-modal" class="modal">
     <div class="modal-content">
       <span id="close-modal" class="close-btn">&times;</span>
       <h3>Preview Your Upload</h3>
       <img id="modal-image" alt="Preview" />
       <input type="text" id="modal-caption" placeholder="Add a caption..." />
-
       <div id="upload-spinner" class="spinner" style="display:none;">
         <div class="loader"></div>
         <p>Uploading, please wait...</p>
       </div>
-
       <div class="modal-actions">
         <button id="confirm-upload">Confirm Upload</button>
         <button id="cancel-upload">Cancel</button>
       </div>
     </div>
   </div>
+
+  <!-- Fullscreen Polaroid Viewer -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <div class="lightbox-content">
+      <span id="lightbox-close" class="lightbox-close">&times;</span>
+      <div class="lightbox-polaroid">
+        <img id="lightbox-image" alt="Enlarged" />
+        <p id="lightbox-caption"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container"></div>
 
   <footer>
     <p>© 2025 The Whittaker Family</p>

@@ -53,6 +53,185 @@ nav a.active-link {
   color: #7b5e3b;
 }
 
+/* Center the upload form cleanly */
+.upload-form {
+  max-width: 500px;
+  margin: 2rem auto 1rem;
+  text-align: center;
+}
+
+.upload-form input[type="file"] {
+  margin: 0.5rem auto;
+  display: block;
+  width: fit-content; /* prevents it from stretching oddly */
+}
+
+.upload-form input[type="text"] {
+  width: 90%;
+  max-width: 300px;
+  margin: 0.5rem auto;
+  display: block;
+  text-align: center;
+}
+
+.upload-form button {
+  margin-top: 0.7rem;
+}
+
+
+.gallery-controls {
+  max-width: 600px;
+  margin: 0 auto 1rem;
+  text-align: right;
+}
+
+.admin-btn {
+  background-color: #c7a46b;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.admin-btn:hover {
+  background-color: #a8854e;
+}
+
+.delete-btn {
+  display: none;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #c58a8a;
+  color: #b54141;
+  border-radius: 999px;
+  width: 26px;
+  height: 26px;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+body.admin-mode .delete-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Place admin button in top-right corner */
+.lock-btn {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 1500;
+
+  background-color: #c7a46b;
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  transition: background-color 0.2s ease;
+}
+
+.lock-btn:hover {
+  background-color: #a8854e;
+}
+
+#toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 2000;
+}
+
+.toast {
+  background: #fffdf8;
+  border: 1px solid #d2c1a8;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+  font-size: 0.9rem;
+  color: #4a3b2d;
+  transform: rotate(-2deg);
+  opacity: 0;
+  animation: toast-in 0.3s ease forwards, toast-out 0.3s ease 3s forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(10px) rotate(-4deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(-2deg); }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0) rotate(-2deg); }
+  to   { opacity: 0; transform: translateY(10px) rotate(-4deg); }
+}
+
+.lightbox-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 1500;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-modal.show {
+  display: flex;
+}
+
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lightbox-polaroid {
+  background: #fffdf8;
+  border: 1px solid #d2c1a8;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  padding: 14px 14px 24px;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 600px;
+}
+
+.lightbox-polaroid img {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.lightbox-polaroid p {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: #4a3b2d;
+  font-style: italic;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  font-size: 2rem;
+  color: #f5f5f5;
+  cursor: pointer;
+}
+
 /* Gallery container + perspective wrapper */
 .gallery-wrapper {
   perspective: 1000px;
