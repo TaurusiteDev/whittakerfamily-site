@@ -440,3 +440,174 @@ footer {
   box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.08);
   position: relative;
 }
+
+/* ========= Handwritten Christmas Note ========= */
+
+.christmas-note {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 2.5rem;
+
+  /* REAL paper texture */
+  background: url("https://i.imgur.com/8yKXqYy.jpg");
+  background-size: cover;
+  background-position: center;
+
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  font-family: 'Georgia', serif;
+
+  position: relative;
+  text-align: center;
+  animation: fadeInNote 1.2s ease-out forwards;
+}
+
+
+.note-title {
+  font-family: "Patrick Hand", "Bradley Hand", cursive;
+  font-size: 2rem;
+  color: #b3542b;
+  margin-bottom: 1.5rem;
+}
+
+.note-body {
+  font-size: 1.1rem;
+  color: #4a3b2d;
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+}
+
+.note-signoff {
+  font-family: "Patrick Hand", "Bradley Hand", cursive;
+  font-size: 1.3rem;
+  margin-top: 2rem;
+  color: #7b5e3b;
+}
+
+/* Fade-in animation */
+@keyframes fadeInNote {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.snowflake {
+  position: fixed;
+  top: -10px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999;
+
+  background: white;
+  box-shadow: 0 0 10px rgba(255,255,255,0.9); /* Glow so it's visible */
+  opacity: 0.95;
+
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh); }
+}
+
+
+
+/* Optional Google Font for handwritten feel */
+@import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+/* PUSHPIN */
+.pushpin {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+
+  background: radial-gradient(circle, #d13939 0%, #8a1b1b 70%);
+  border-radius: 50%;
+  z-index: 10;
+  box-shadow: 0 6px 10px rgba(0,0,0,0.35);
+}
+
+/* HANDWRITTEN NOTE */
+.christmas-note {
+  max-width: 640px;
+  margin: 5rem auto 4rem; /* lowered spacing for better balance */
+  padding: 2.8rem;
+  background: url("https://i.imgur.com/8yKXqYy.jpg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+      0 18px 35px rgba(0,0,0,0.25),
+      inset 0px 0px 18px rgba(255,255,255,0.45);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  animation: fadeInNote 1.2s ease-out forwards;
+
+  filter: drop-shadow(0 12px 18px rgba(0,0,0,0.20));
+}
+.handwritten-animation {
+  overflow: visible !important;
+}
+
+/* Folded edges */
+.christmas-note:before,
+.christmas-note:after {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 15px;
+  background: rgba(255,255,255,0.5);
+  bottom: -8px;
+  transform: rotate(3deg);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.18);
+}
+
+.christmas-note:before { left: 20px; }
+.christmas-note:after { right: 20px; transform: rotate(-3deg); }
+
+.handwritten-animation p,
+.handwritten-animation .note-signoff {
+  opacity: 0;
+  animation: handwriting 1.6s ease forwards;
+}
+
+.handwritten-animation p:nth-of-type(1) { animation-delay: 0.6s; }
+.handwritten-animation p:nth-of-type(2) { animation-delay: 1.4s; }
+.handwritten-animation .note-signoff { animation-delay: 2.6s; }
+
+@keyframes handwriting {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sparkle-title {
+  position: relative;
+  display: inline-block;
+  font-family: "Patrick Hand", "Bradley Hand", cursive;
+  font-size: 2.4rem;
+  color: #b3542b;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 9px rgba(255, 240, 220, 0.7);
+}
+
+.sparkle-title::after {
+  content: "✨";
+  position: absolute;
+  right: -26px;
+  top: -12px;
+  animation: sparkle 1.6s infinite;
+  font-size: 1.5rem;
+}
+
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.4) rotate(20deg); }
+}
+
+
+

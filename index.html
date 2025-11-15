@@ -18,11 +18,38 @@
   </header>
 
   <main>
-    <section class="intro">
-      <h2>Welcome</h2>
-      <p>Welcome to the Whittaker Family website — a place to share our stories, photos, and memories.</p>
-      <p>Built with love and a touch of Christmas spirit 🎄</p>
-    </section>
+<section class="christmas-note handwritten-animation">
+
+  <!-- pushpin INSIDE the note -->
+  <div class="pushpin"></div>
+
+  <h2 class="note-title sparkle-title">Merry Christmas 🎄</h2>
+
+  <p class="note-body">
+    This website was made with a lot of love as a Christmas gift to the
+    wonderful Whittaker family — a small way to say thank you for the warmth,
+    kindness, and support you've shown me this year.
+  </p>
+
+  <p class="note-body">
+    I wanted to create a cozy place where family memories can be shared,
+    remembered, and treasured. I hope it brings joy to everyone who visits.
+  </p>
+
+  <p class="note-signoff">
+    With love,<br>Oliver 🤍
+  </p>
+
+</section>
+
+<!-- Snowfall Effect -->
+<div class="snow"></div>
+
+<div class="christmas-tree">
+  <div class="tree-star"></div>
+  <div class="tree"></div>
+</div>
+
   </main>
 
   <footer>
@@ -30,6 +57,29 @@
   </footer>
 
 <script type="module" src="js/script.js"></script>
+
+<script>
+  for (let i = 0; i < 70; i++) {
+    const snow = document.createElement("div");
+    snow.classList.add("snowflake");
+
+    const size = Math.random() * 4 + 2;
+    snow.style.width = size + "px";
+    snow.style.height = size + "px";
+
+    snow.style.left = Math.random() * 100 + "vw";
+    snow.style.animationDuration = Math.random() * 6 + 6 + "s";
+    snow.style.animationDelay = Math.random() * 5 + "s";
+
+    // Make snow bright white with glow so it shows over light background
+    snow.style.background = "white";
+    snow.style.boxShadow = "0 0 8px rgba(255,255,255,0.9)";
+
+    document.body.appendChild(snow);
+  }
+</script>
+
+
 
 </body>
 </html>
