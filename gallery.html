@@ -19,25 +19,40 @@
     </nav>
   </header>
 
-  <main>
-    <!-- Upload Form -->
-    <section class="upload-form">
-      <h2>Upload a Family Photo</h2>
-      <input type="file" id="photo-upload" accept="image/*" />
-      <input type="text" id="photo-caption" placeholder="Add a caption..." />
-      <button id="open-modal-btn">Preview & Upload</button>
-    </section>
+ <main>
+  <!-- 🔐 Password Lock Screen -->
+  <div id="gallery-lock" class="gallery-lock">
+    <div class="lock-box">
+      <h2>🔒 Family Gallery</h2>
+      <p>This page is protected for family privacy.</p>
+      <input type="password" id="gallery-password" placeholder="Enter gallery password" />
+      <button id="unlock-gallery-btn">Unlock</button>
+      <p id="gallery-password-error" class="error"></p>
+    </div>
+  </div>
 
-    <!-- Admin / Gallery Controls -->
+  <!-- 📸 Upload Section (hidden until unlocked) -->
+  <section class="upload-form hidden">
+    <h2>Upload a Family Photo</h2>
+    <input type="file" id="photo-upload" multiple accept="image/*" />
+    <input type="text" id="photo-caption" placeholder="Caption for all selected images..." />
+    <button id="open-modal-btn">Preview & Upload</button>
+  </section>
+
+        <!-- Admin / Gallery Controls -->
     <section class="gallery-controls">
       <button id="admin-mode-btn" class="admin-btn lock-btn">🔒</button>
+      <button class="edit-btn">✏</button>
     </section>
 
-    <!-- Gallery Display -->
-    <div class="gallery-wrapper">
-      <div id="gallery" class="gallery"></div>
-    </div>
-  </main>
+  <!-- 📔 Albums / Books Grid -->
+  <div id="album-grid" class="album-grid hidden">
+    <div id="gallery" class="gallery"></div>
+  </div>
+
+  <!-- 📚 Book Viewer -->
+  <div id="book-viewer" class="book-viewer hidden"></div>
+</main>
 
   <!-- Upload Modal -->
   <div id="preview-modal" class="modal">
@@ -53,6 +68,26 @@
       <div class="modal-actions">
         <button id="confirm-upload">Confirm Upload</button>
         <button id="cancel-upload">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- ✏ Edit Caption Modal -->
+  <div id="edit-caption-modal" class="modal">
+    <div class="modal-content edit-caption-box">
+      <span id="edit-caption-close" class="close-btn">&times;</span>
+      <h3>Edit Caption</h3>
+      <img id="edit-caption-image" alt="Photo" />
+      <textarea id="edit-caption-input" placeholder="Edit caption..."></textarea>
+
+      <div id="edit-caption-spinner" class="spinner" style="display:none;">
+        <div class="loader"></div>
+        <p>Saving, please wait...</p>
+      </div>
+
+      <div class="modal-actions">
+        <button id="edit-caption-save">Save Changes</button>
+        <button id="edit-caption-cancel">Cancel</button>
       </div>
     </div>
   </div>

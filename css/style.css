@@ -53,6 +53,52 @@ nav a.active-link {
   color: #7b5e3b;
 }
 
+/* 🔐 Password Lock Screen */
+.gallery-lock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6rem 1rem;
+  text-align: center;
+}
+
+.lock-box {
+  background: #fff;
+  padding: 2rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  max-width: 360px;
+  width: 100%;
+}
+
+.lock-box input {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 0.8rem 0;
+  border-radius: 6px;
+  border: 1px solid #c9b8a8;
+}
+
+.lock-box button {
+  padding: 0.6rem 1.2rem;
+  background: #c29b72;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.lock-box button:hover {
+  background: #a6794f;
+}
+
+.error {
+  color: #b33636;
+  margin-top: 0.5rem;
+}
+
+.hidden { display: none !important; }
+
 /* Center the upload form cleanly */
 .upload-form {
   max-width: 500px;
@@ -117,10 +163,99 @@ nav a.active-link {
   box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
 
+/* ===== Edit Button (caption edit) ===== */
+.edit-btn {
+  position: absolute;
+  top: 6px;
+  right: 40px; /* leaves space beside delete button */
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  background: #f3d08a;
+  color: #4a3b2d;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: 0.25s ease;
+}
+
+.admin-mode .edit-btn {
+  opacity: 1;
+}
+
+.edit-btn:hover {
+  transform: scale(1.12);
+  background: #e6bd6a;
+}
+
 body.admin-mode .delete-btn {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+}
+
+/* ===========================
+   ✏ Edit Caption Modal
+=========================== */
+#edit-caption-modal .modal-content.edit-caption-box {
+  max-width: 420px;
+  width: 90%;
+  text-align: center;
+  background: #fffdf8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  animation: fadeIn 0.3s ease;
+}
+
+#edit-caption-modal img {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+#edit-caption-input {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  padding: 0.6rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid #c8b8a8;
+  background: #fff;
+  margin-bottom: 1rem;
+}
+
+#edit-caption-save {
+  background-color: #c2a878;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#edit-caption-save:hover {
+  background-color: #a98755;
+}
+
+#edit-caption-cancel {
+  background-color: #d7d7d7;
+  color: #333;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#edit-caption-cancel:hover {
+  background-color: #bfbfbf;
 }
 
 /* Place admin button in top-right corner */
@@ -587,6 +722,5 @@ footer {
   0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
   50% { opacity: 1; transform: scale(1.4) rotate(20deg); }
 }
-
 
 

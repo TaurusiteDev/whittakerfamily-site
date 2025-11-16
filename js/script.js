@@ -17,9 +17,9 @@ import {
   orderBy,
   query,
   deleteDoc,
-  doc
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-firestore.js";
-
 
 // ===============================
 // Firebase Config
@@ -37,16 +37,52 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const db = getFirestore(app);
 
+// (Unused helper, safe to keep if you want)
+async function updateCaption(id, newCaption) {
+  try {
+    const photoRef = doc(db, "photos", id);
+    await updateDoc(photoRef, { caption: newCaption });
+    showToast("Caption updated.");
+  } catch (err) {
+    console.error("Caption update failed:", err);
+    alert("Failed to update caption.");
+  }
+}
 
 // ===============================
-// Passwords (REPLACE THESE!)
+// Gallery Password Lock
 // ===============================
-const UPLOAD_PASSWORD = "1234";
+const GALLERY_PASSWORD = "1234";
+const lockScreen = document.getElementById("gallery-lock");
+const albumGrid = document.getElementById("album-grid");
+const uploadForm = document.querySelector(".upload-form");
+
+function unlockGalleryUI() {
+  lockScreen?.classList.add("hidden");
+  uploadForm?.classList.remove("hidden");
+  albumGrid?.classList.remove("hidden");
+  sessionStorage.setItem("galleryUnlocked", "yes");
+}
+
+if (sessionStorage.getItem("galleryUnlocked") === "yes") {
+  unlockGalleryUI();
+}
+
+document.getElementById("unlock-gallery-btn")?.addEventListener("click", () => {
+  const input = document.getElementById("gallery-password").value.trim();
+  const error = document.getElementById("gallery-password-error");
+  if (input === GALLERY_PASSWORD) {
+    unlockGalleryUI();
+  } else if (error) {
+    error.textContent = "Incorrect password. Please try again.";
+  }
+});
+
+// ===============================
+// Admin Password
+// ===============================
 const ADMIN_PASSWORD = "1234";
-
-let uploadUnlocked = false;
 let adminUnlocked = false;
-
 
 // ===============================
 // DOM Elements
@@ -58,13 +94,12 @@ const openModalBtn = document.getElementById("open-modal-btn");
 const modal = document.getElementById("preview-modal");
 const modalImage = document.getElementById("modal-image");
 const modalCaption = document.getElementById("modal-caption");
-const confirmUpload = document.getElementById("confirm-upload");
-const cancelUpload = document.getElementById("cancel-upload");
+const confirmUploadBtn = document.getElementById("confirm-upload");
+const cancelUploadBtn = document.getElementById("cancel-upload");
 const closeModalBtn = document.getElementById("close-modal");
 
 const spinner = document.getElementById("upload-spinner");
 const galleryEl = document.getElementById("gallery");
-
 const adminBtn = document.getElementById("admin-mode-btn");
 
 const lightbox = document.getElementById("lightbox-modal");
@@ -74,13 +109,15 @@ const lightboxClose = document.getElementById("lightbox-close");
 
 const toastContainer = document.getElementById("toast-container");
 
-let selectedFile = null;
-
+let selectedFiles = [];
+let editPhotoId = null; // used when editing captions
+let modalMode = "upload"; // "upload" or "edit"
 
 // ===============================
-// Toast Notifications
+// Toast
 // ===============================
 function showToast(msg) {
+  if (!toastContainer) return;
   const el = document.createElement("div");
   el.className = "toast";
   el.textContent = msg;
@@ -88,11 +125,10 @@ function showToast(msg) {
   setTimeout(() => el.remove(), 3500);
 }
 
-
 // ===============================
 // Admin Lock Button
 // ===============================
-adminBtn.addEventListener("click", () => {
+adminBtn?.addEventListener("click", () => {
   if (!adminUnlocked) {
     const pwd = prompt("Enter admin password:");
     if (pwd !== ADMIN_PASSWORD) {
@@ -100,196 +136,258 @@ adminBtn.addEventListener("click", () => {
       return;
     }
     adminUnlocked = true;
-    adminBtn.textContent = "🔓"; // unlocked
+    adminBtn.textContent = "🔓";
     document.body.classList.add("admin-mode");
     showToast("Admin mode enabled.");
   } else {
     adminUnlocked = false;
-    adminBtn.textContent = "🔒"; // locked
+    adminBtn.textContent = "🔒";
     document.body.classList.remove("admin-mode");
     showToast("Admin mode disabled.");
   }
 });
 
+// ===============================
+// File Input Supports Multiple Uploads
+// ===============================
+if (fileInput) fileInput.multiple = true;
 
 // ===============================
-// Upload Modal 
+// Open Upload Modal
 // ===============================
-openModalBtn.addEventListener("click", () => {
-
-  // Upload password first (only once per session)
-  if (!uploadUnlocked) {
-    const pwd = prompt("Enter upload password:");
-    if (pwd !== UPLOAD_PASSWORD) {
-      alert("Incorrect password.");
-      return;
-    }
-    uploadUnlocked = true;
-    showToast("Upload unlocked for this session.");
-  }
-
-  selectedFile = fileInput.files[0];
-  if (!selectedFile) {
-    alert("Please select a photo first.");
+openModalBtn?.addEventListener("click", () => {
+  if (!fileInput.files || fileInput.files.length === 0) {
+    alert("Please select one or more photos first.");
     return;
   }
+
+  modalMode = "upload"; // ensure correct mode
+  confirmUploadBtn.textContent = "Confirm Upload";
+
+  selectedFiles = Array.from(fileInput.files);
+  const first = selectedFiles[0];
 
   const reader = new FileReader();
   reader.onload = (e) => {
     modalImage.src = e.target.result;
-    modalCaption.value = captionField.value || "";
+    modalCaption.value = captionField?.value || "";
     modal.classList.add("active");
   };
-  reader.readAsDataURL(selectedFile);
+  reader.readAsDataURL(first);
 });
 
+// ===============================
+// Close Modal
+// ===============================
 function closeModal() {
-  modal.classList.remove("active");
+  modal?.classList.remove("active");
   spinner.style.display = "none";
-  selectedFile = null;
-  fileInput.value = "";
+  selectedFiles = [];
+  if (fileInput) fileInput.value = "";
+  editPhotoId = null;
+  modalMode = "upload";
+  confirmUploadBtn.textContent = "Confirm Upload";
 }
 
-cancelUpload.addEventListener("click", closeModal);
-closeModalBtn.addEventListener("click", closeModal);
-
-modal.addEventListener("click", (e) => {
+cancelUploadBtn?.addEventListener("click", closeModal);
+closeModalBtn?.addEventListener("click", closeModal);
+modal?.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
 });
 
+// ===============================
+// Confirm Button (Upload or Save Caption)
+// ===============================
+confirmUploadBtn?.addEventListener("click", async () => {
+  if (modalMode === "edit") {
+    return saveCaptionEdit();
+  } else {
+    return doPhotoUpload();
+  }
+});
 
 // ===============================
-// Confirm Upload
+// Upload Photos (Bulk with compression)
 // ===============================
-confirmUpload.addEventListener("click", async () => {
-  if (!selectedFile) return;
+async function doPhotoUpload() {
+  if (!selectedFiles.length) return;
 
   const caption = modalCaption.value.trim();
-
-  // File type/size validation
   const ALLOWED = ["image/jpeg", "image/png"];
-  if (!ALLOWED.includes(selectedFile.type)) {
-    alert("Only JPG and PNG allowed.");
-    return;
-  }
 
-  if (selectedFile.size > 10 * 1024 * 1024) {
-    alert("Max file size is 10MB.");
-    return;
+  for (const f of selectedFiles) {
+    if (!ALLOWED.includes(f.type)) {
+      alert("Only JPG and PNG allowed.");
+      return;
+    }
+    if (f.size > 10 * 1024 * 1024) {
+      alert("Max file size is 10MB.");
+      return;
+    }
   }
 
   spinner.style.display = "block";
-
-  // Compression
-  const compressed = await imageCompression(selectedFile, {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1600,
-    useWebWorker: true
-  });
+  confirmUploadBtn.disabled = true;
+  const originalText = confirmUploadBtn.textContent;
 
   try {
-    const fileRef = ref(storage, "gallery/" + Date.now() + "-" + selectedFile.name);
-    await uploadBytes(fileRef, compressed);
-    const url = await getDownloadURL(fileRef);
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
 
-    // Save Firestore doc + store the file path for deletion
-    await addDoc(collection(db, "photos"), {
-      caption: caption || "Untitled",
-      url,
-      path: fileRef.fullPath,
-      timestamp: Date.now()
-    });
+      // client-side compression (from browser-image-compression)
+      const compressed = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1600,
+        useWebWorker: true
+      });
 
-    showToast("Photo uploaded!");
+      const fileRef = ref(storage, "gallery/" + Date.now() + "-" + file.name);
+      await uploadBytes(fileRef, compressed);
+      const url = await getDownloadURL(fileRef);
+
+      await addDoc(collection(db, "photos"), {
+        caption, // empty allowed
+        url,
+        path: fileRef.fullPath,
+        timestamp: Date.now()
+      });
+
+      confirmUploadBtn.textContent = `Uploading... (${i + 1}/${selectedFiles.length})`;
+    }
+
+    showToast("Photos uploaded!");
+    if (captionField) captionField.value = "";
     closeModal();
-
   } catch (err) {
     console.error(err);
     alert("Upload failed.");
   }
 
   spinner.style.display = "none";
-});
-
+  confirmUploadBtn.disabled = false;
+  confirmUploadBtn.textContent = originalText;
+}
 
 // ===============================
-// Real-time Gallery Loader
+// Save Caption Edit (using same modal)
 // ===============================
-const q = query(collection(db, "photos"), orderBy("timestamp", "desc"));
-onSnapshot(q, (snapshot) => {
-  galleryEl.innerHTML = "";
+async function saveCaptionEdit() {
+  if (!editPhotoId) return;
 
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const id = docSnap.id;
+  const newCaption = modalCaption.value; // empty allowed
+  spinner.style.display = "block";
+  confirmUploadBtn.disabled = true;
 
-    const item = document.createElement("div");
-    item.className = "polaroid";
-    item.dataset.id = id;
-    item.dataset.path = data.path;
-    item.dataset.caption = data.caption;
-    item.dataset.url = data.url;
+  try {
+    await updateDoc(doc(db, "photos", editPhotoId), { caption: newCaption });
+    showToast("Caption updated!");
+    // onSnapshot will refresh the gallery for us
+    closeModal();
+  } catch (err) {
+    console.error("Failed to update caption.", err);
+    alert("Failed to update caption.");
+  }
 
-    // Variable tilt
-    const tilt = (Math.random() * 28 - 14).toFixed(1);
-    item.style.setProperty("--tilt", tilt + "deg");
+  spinner.style.display = "none";
+  confirmUploadBtn.disabled = false;
+  confirmUploadBtn.textContent = "Confirm Upload";
+}
 
-    item.innerHTML = `
-      <button class="delete-btn">×</button>
-      <img src="${data.url}">
-      <p>${data.caption}</p>
-    `;
+// ===============================
+// Real-time Gallery Rendering
+// ===============================
+if (galleryEl) {
+  const q = query(collection(db, "photos"), orderBy("timestamp", "desc"));
 
-    galleryEl.appendChild(item);
+  onSnapshot(q, (snapshot) => {
+    galleryEl.innerHTML = "";
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const id = docSnap.id;
+
+      const card = document.createElement("div");
+      card.className = "polaroid";
+      card.dataset.id = id;
+      card.dataset.path = data.path;
+      card.dataset.caption = data.caption;
+      card.dataset.url = data.url;
+
+      const tilt = (Math.random() * 28 - 14).toFixed(1);
+      card.style.setProperty("--tilt", tilt + "deg");
+
+      card.innerHTML = `
+        <button class="delete-btn">×</button>
+        <button class="edit-btn">✏</button>
+        <img src="${data.url}">
+        <p>${data.caption || ""}</p>
+      `;
+
+      galleryEl.appendChild(card);
+    });
   });
-});
 
+  // ===============================
+  // Gallery Click Handler
+  // ===============================
+  galleryEl.addEventListener("click", async (e) => {
+    const card = e.target.closest(".polaroid");
+    if (!card) return;
 
-// ===============================
-// Click Handler (Delete / Lightbox)
-// ===============================
-galleryEl.addEventListener("click", async (e) => {
-  const card = e.target.closest(".polaroid");
-  if (!card) return;
+    const id = card.dataset.id;
+    const path = card.dataset.path;
+    const url = card.dataset.url;
+    const caption = card.dataset.caption;
 
-  const deleteBtn = e.target.closest(".delete-btn");
-  const id = card.dataset.id;
-  const path = card.dataset.path;
-  const url = card.dataset.url;
-  const caption = card.dataset.caption;
+    // DELETE
+    if (e.target.closest(".delete-btn")) {
+      if (!adminUnlocked) {
+        alert("Admin mode required.");
+        return;
+      }
+      if (!confirm("Delete this photo?")) return;
 
-  // ADMIN DELETE
-  if (deleteBtn) {
-    if (!adminUnlocked) {
-      alert("Admin mode required.");
+      try {
+        await deleteObject(ref(storage, path));
+        await deleteDoc(doc(db, "photos", id));
+        showToast("Photo deleted.");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to delete.");
+      }
       return;
     }
 
-    if (!confirm("Delete this photo?")) return;
+    // EDIT CAPTION - reuse upload modal
+    const editBtn = e.target.closest(".edit-btn");
+    if (editBtn) {
+      if (!adminUnlocked) {
+        alert("Admin mode required.");
+        return;
+      }
 
-    try {
-      // Delete from Firebase Storage
-      await deleteObject(ref(storage, path));
-
-      // Delete from Firestore
-      await deleteDoc(doc(db, "photos", id));
-
-      showToast("Photo deleted.");
-
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete.");
+      modalMode = "edit";
+      editPhotoId = id;
+      modalCaption.value = caption || "";
+      modalImage.src = url;
+      confirmUploadBtn.textContent = "Save Changes";
+      modal.classList.add("active");
+      return;
     }
-    return;
-  }
 
-  // FULLSCREEN LIGHTBOX
-  lightboxImage.src = url;
-  lightboxCaption.textContent = caption;
-  lightbox.classList.add("show");
-});
+    // LIGHTBOX VIEW
+    if (lightbox) {
+      lightboxImage.src = url;
+      lightboxCaption.textContent = caption || "";
+      lightbox.classList.add("show");
+    }
+  });
+}
 
-lightboxClose.addEventListener("click", () => lightbox.classList.remove("show"));
-lightbox.addEventListener("click", (e) => {
+// ===============================
+// Lightbox Closing
+// ===============================
+lightboxClose?.addEventListener("click", () => lightbox.classList.remove("show"));
+lightbox?.addEventListener("click", (e) => {
   if (e.target === lightbox) lightbox.classList.remove("show");
 });
