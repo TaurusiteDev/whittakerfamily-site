@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Whittaker Family Gallery</title>
   <link rel="stylesheet" href="css/style.css" />
+
   <!-- Image compression library -->
   <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </head>
@@ -19,40 +20,49 @@
     </nav>
   </header>
 
- <main>
-  <!-- 🔐 Password Lock Screen -->
-  <div id="gallery-lock" class="gallery-lock">
-    <div class="lock-box">
-      <h2>🔒 Family Gallery</h2>
-      <p>This page is protected for family privacy.</p>
-      <input type="password" id="gallery-password" placeholder="Enter gallery password" />
-      <button id="unlock-gallery-btn">Unlock</button>
-      <p id="gallery-password-error" class="error"></p>
+  <main>
+    <!-- 🔐 Password Lock Screen -->
+    <div id="gallery-lock" class="gallery-lock">
+      <div class="lock-box">
+        <h2>🔒 Family Gallery</h2>
+        <p>This page is protected for family privacy.</p>
+        <input type="password" id="gallery-password" placeholder="Enter gallery password" />
+        <button id="unlock-gallery-btn">Unlock</button>
+        <p id="gallery-password-error" class="error"></p>
+      </div>
     </div>
-  </div>
 
-  <!-- 📸 Upload Section (hidden until unlocked) -->
-  <section class="upload-form hidden">
-    <h2>Upload a Family Photo</h2>
-    <input type="file" id="photo-upload" multiple accept="image/*" />
-    <input type="text" id="photo-caption" placeholder="Caption for all selected images..." />
-    <button id="open-modal-btn">Preview & Upload</button>
-  </section>
-
-        <!-- Admin / Gallery Controls -->
-    <section class="gallery-controls">
-      <button id="admin-mode-btn" class="admin-btn lock-btn">🔒</button>
-      <button class="edit-btn">✏</button>
+    <!-- 📸 Upload Section (hidden until unlocked) -->
+    <section class="upload-form hidden">
+      <h2>Upload Family Photos</h2>
+      <input type="file" id="photo-upload" multiple accept="image/*" />
+      <input type="text" id="photo-caption" placeholder="Caption for all selected images..." />
+      <input type="text" id="photo-album" placeholder="Album name (e.g. Christmas 2024)" />
+      <button id="open-modal-btn">Preview & Upload</button>
     </section>
 
-  <!-- 📔 Albums / Books Grid -->
-  <div id="album-grid" class="album-grid hidden">
-    <div id="gallery" class="gallery"></div>
-  </div>
+    <!-- Admin Button -->
+    <section class="gallery-controls">
+      <button id="admin-mode-btn" class="admin-btn lock-btn">🔒</button>
+    </section>
 
-  <!-- 📚 Book Viewer -->
-  <div id="book-viewer" class="book-viewer hidden"></div>
-</main>
+    <!-- 📚 Albums + Album View -->
+    <div id="album-grid" class="hidden">
+      <!-- Album List -->
+      <section class="album-section">
+        <h2>Family Photo Albums</h2>
+        <p class="album-hint">Choose an album to open the photo book.</p>
+        <div id="album-list" class="album-grid"></div>
+      </section>
+
+      <!-- Album View -->
+      <section id="album-view" class="album-view hidden">
+        <button id="back-to-albums" class="back-button">← Back to albums</button>
+        <h2 id="current-album-title"></h2>
+        <div id="gallery" class="gallery"></div>
+      </section>
+    </div>
+  </main>
 
   <!-- Upload Modal -->
   <div id="preview-modal" class="modal">
@@ -61,10 +71,12 @@
       <h3>Preview Your Upload</h3>
       <img id="modal-image" alt="Preview" />
       <input type="text" id="modal-caption" placeholder="Add a caption..." />
+
       <div id="upload-spinner" class="spinner" style="display:none;">
         <div class="loader"></div>
         <p>Uploading, please wait...</p>
       </div>
+
       <div class="modal-actions">
         <button id="confirm-upload">Confirm Upload</button>
         <button id="cancel-upload">Cancel</button>
@@ -72,7 +84,7 @@
     </div>
   </div>
 
-    <!-- ✏ Edit Caption Modal -->
+  <!-- Edit Caption Modal -->
   <div id="edit-caption-modal" class="modal">
     <div class="modal-content edit-caption-box">
       <span id="edit-caption-close" class="close-btn">&times;</span>
@@ -99,18 +111,18 @@
       <div class="lightbox-polaroid">
         <img id="lightbox-image" alt="Enlarged" />
         <p id="lightbox-caption"></p>
+        <button id="lightbox-download" class="download-btn">Download photo</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast container -->
+  <!-- Toast Container -->
   <div id="toast-container"></div>
 
   <footer>
     <p>© 2025 The Whittaker Family</p>
   </footer>
 
-  <!-- Firebase + site logic -->
   <script type="module" src="js/script.js"></script>
 </body>
 </html>
