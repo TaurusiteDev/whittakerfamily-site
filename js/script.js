@@ -76,9 +76,8 @@ let adminUnlocked = false;
 // DOM Elements
 // ===============================
 const fileInput = document.getElementById("photo-upload");
-const captionField = document.getElementById("photo-caption");
-const albumField = document.getElementById("photo-album");
-const openModalBtn = document.getElementById("open-modal-btn");
+const createAlbumBtn = document.getElementById("create-album-btn");
+const albumUploadBtn = document.getElementById("album-upload-btn");
 
 const modal = document.getElementById("preview-modal");
 const modalImage = document.getElementById("modal-image");
@@ -98,6 +97,19 @@ const lightboxClose = document.getElementById("lightbox-close");
 const lightboxDownload = document.getElementById("lightbox-download");
 
 const toastContainer = document.getElementById("toast-container");
+
+// ===============================
+// Create Album
+// ===============================
+createAlbumBtn?.addEventListener("click", () => {
+  const name = prompt("Name of the new album:");
+  const trimmed = name?.trim();
+  if (!trimmed) return;
+
+  // Set current album and open an empty book view
+  currentAlbum = trimmed;
+  renderAlbumView(trimmed, []); // no photos yet, shows empty pages
+});
 
 // Albums
 const albumListEl = document.getElementById("album-list");
@@ -153,15 +165,29 @@ adminBtn?.addEventListener("click", () => {
 if (fileInput) fileInput.multiple = true;
 
 // ===============================
-// Open Upload Modal
+// Album upload flow (must be in an album)
 // ===============================
-openModalBtn?.addEventListener("click", () => {
-  if (!fileInput.files || fileInput.files.length === 0) {
-    alert("Please select one or more photos first.");
+
+// Clicking this button opens the file picker
+albumUploadBtn?.addEventListener("click", () => {
+  if (!currentAlbum) {
+    alert("Please select or create an album first.");
+    return;
+  }
+  fileInput?.click();
+});
+
+// When files are chosen, show the preview modal
+fileInput?.addEventListener("change", () => {
+  if (!fileInput.files || fileInput.files.length === 0) return;
+
+  if (!currentAlbum) {
+    alert("Please select or create an album first.");
+    fileInput.value = "";
     return;
   }
 
-  modalMode = "upload"; // ensure correct mode
+  modalMode = "upload";
   confirmUploadBtn.textContent = "Confirm Upload";
 
   selectedFiles = Array.from(fileInput.files);
@@ -170,11 +196,12 @@ openModalBtn?.addEventListener("click", () => {
   const reader = new FileReader();
   reader.onload = (e) => {
     modalImage.src = e.target.result;
-    modalCaption.value = captionField?.value || "";
+    modalCaption.value = ""; // fresh caption for this batch
     modal.classList.add("active");
   };
   reader.readAsDataURL(first);
 });
+
 
 // ===============================
 // Close Modal
@@ -211,10 +238,14 @@ confirmUploadBtn?.addEventListener("click", async () => {
 // ===============================
 async function doPhotoUpload() {
   if (!selectedFiles.length) return;
+  if (!currentAlbum) {
+    alert("Please select or create an album first.");
+    return;
+  }
 
   const caption = modalCaption.value.trim();
-  const albumName =
-    (albumField?.value.trim() || "Family Album"); // auto-create album
+const albumName = currentAlbum || "Family Album";
+
 
   const ALLOWED = ["image/jpeg", "image/png"];
 
@@ -260,8 +291,7 @@ async function doPhotoUpload() {
     }
 
     showToast("Photos uploaded!");
-    if (captionField) captionField.value = "";
-    if (albumField) albumField.value = "";
+    
     closeModal();
   } catch (err) {
     console.error(err);
@@ -272,6 +302,7 @@ async function doPhotoUpload() {
   confirmUploadBtn.disabled = false;
   confirmUploadBtn.textContent = originalText;
 }
+
 
 // ===============================
 // Save Caption Edit (using same modal)
@@ -462,27 +493,29 @@ const rightPhotos = photos.slice(PHOTOS_PER_PAGE, PHOTOS_PER_SPREAD);
 if (galleryEl && albumListEl) {
   const q = query(collection(db, "photos"), orderBy("timestamp", "desc"));
 
-  onSnapshot(q, (snapshot) => {
-    photosCache = [];
-    snapshot.forEach((docSnap) => {
-      photosCache.push({
-        id: docSnap.id,
-        ...docSnap.data()
-      });
+onSnapshot(q, (snapshot) => {
+  photosCache = [];
+  snapshot.forEach((docSnap) => {
+    photosCache.push({
+      id: docSnap.id,
+      ...docSnap.data()
     });
-
-    const albumsMap = renderAlbumsFromCache();
-
-    // If already in an album, keep view in sync
-    if (currentAlbum && albumsMap.has(currentAlbum)) {
-      renderAlbumView(currentAlbum, albumsMap.get(currentAlbum));
-    } else {
-      // If current album was deleted or none selected, go back to album list
-      currentAlbum = null;
-      albumViewEl.classList.add("hidden");
-      albumListEl.parentElement.classList.remove("hidden");
-    }
   });
+
+  const albumsMap = renderAlbumsFromCache();
+
+  // If already in an album and it has photos, keep in sync
+  if (currentAlbum && albumsMap.has(currentAlbum)) {
+    renderAlbumView(currentAlbum, albumsMap.get(currentAlbum));
+  } else if (!currentAlbum) {
+    // Only force album list if we don't have a current album
+    albumViewEl.classList.add("hidden");
+    albumListEl.parentElement.classList.remove("hidden");
+  }
+  // If currentAlbum exists but has no photos yet, do nothing;
+  // the existing empty view stays visible.
+});
+
 
   // Click album cards
   albumListEl.addEventListener("click", (e) => {

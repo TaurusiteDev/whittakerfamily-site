@@ -32,37 +32,47 @@
       </div>
     </div>
 
-    <!-- 📸 Upload Section (hidden until unlocked) -->
-    <section class="upload-form hidden">
-      <h2>Upload Family Photos</h2>
-      <input type="file" id="photo-upload" multiple accept="image/*" />
-      <input type="text" id="photo-caption" placeholder="Caption for all selected images..." />
-      <input type="text" id="photo-album" placeholder="Album name (e.g. Christmas 2024)" />
-      <button id="open-modal-btn">Preview & Upload</button>
-    </section>
-
     <!-- Admin Button -->
     <section class="gallery-controls">
       <button id="admin-mode-btn" class="admin-btn lock-btn">🔒</button>
     </section>
 
-    <!-- 📚 Albums + Album View -->
-    <div id="album-grid" class="hidden">
-      <!-- Album List -->
-      <section class="album-section">
-        <h2>Family Photo Albums</h2>
-        <p class="album-hint">Choose an album to open the photo book.</p>
-        <div id="album-list" class="album-grid"></div>
-      </section>
+<!-- 📚 Albums + Album View -->
+<div id="album-grid" class="hidden">
+  <!-- Album List -->
+  <section class="album-section">
+    <h2>Family Photo Albums</h2>
+    <p class="album-hint">Choose an album to open the photo book, or create a new one.</p>
 
-      <!-- Album View -->
-      <section id="album-view" class="album-view hidden">
-        <button id="back-to-albums" class="back-button">← Back to albums</button>
-        <h2 id="current-album-title"></h2>
-        <div id="gallery" class="gallery"></div>
-      </section>
-    </div>
-  </main>
+    <!-- New: create album button -->
+    <button id="create-album-btn" class="back-button">
+      + Create new album
+    </button>
+
+    <div id="album-list" class="album-grid"></div>
+  </section>
+
+  <!-- Album View -->
+  <section id="album-view" class="album-view hidden">
+    <button id="back-to-albums" class="back-button">← Back to albums</button>
+    <h2 id="current-album-title"></h2>
+
+    <!-- New: upload into THIS album -->
+    <button id="album-upload-btn" class="back-button">
+      + Add photos to this album
+    </button>
+
+    <!-- Hidden file input used only inside albums -->
+    <input type="file"
+           id="photo-upload"
+           multiple
+           accept="image/*"
+           style="display:none;" />
+
+    <div id="gallery" class="gallery"></div>
+  </section>
+</div>
+
 
   <!-- Upload Modal -->
   <div id="preview-modal" class="modal">
