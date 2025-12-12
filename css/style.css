@@ -1136,7 +1136,6 @@ footer {
   box-shadow: 0 0 0 2px rgba(168,135,85,0.35);
 }
 
-/* Right side: details panel */
 .person-detail {
   flex: 1;
   background: #fffdf8;
@@ -1144,7 +1143,13 @@ footer {
   padding: 1.5rem;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   border: 1px solid #e1d2c2;
+
+  /* NEW: sticky detail panel */
+  position: sticky;
+  top: 100px;   /* tweak if it sits too high/low; 100px clears header + nav */
+  align-self: flex-start; /* ensures it doesn't stretch full height in the flex row */
 }
+
 
 .person-detail h2 {
   margin-top: 0;
@@ -1165,7 +1170,6 @@ footer {
   font-size: 0.95rem;
 }
 
-/* Stack vertically on small screens */
 @media (max-width: 900px) {
   .familytree-layout {
     flex-direction: column;
@@ -1182,7 +1186,13 @@ footer {
   .generation::before {
     left: -1.5rem;
   }
+
+  .person-detail {
+    position: static;
+    top: auto;
+  }
 }
+
 
 /* ========== Family units: parents with children ========== */
 
@@ -1225,4 +1235,78 @@ footer {
 /* Make person cards a bit more compact inside family units */
 .family-unit .person-card {
   min-width: 130px;
+}
+
+/* Avatars in tree cards */
+.person-avatar-wrapper {
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 auto 0.4rem;
+  border: 2px solid rgba(199,164,107,0.6);
+  background: #f5e8d7;
+}
+
+.person-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Detail avatar (larger) */
+.detail-avatar-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 0 auto 0.75rem;
+  border: 3px solid rgba(199,164,107,0.8);
+  background: #f5e8d7;
+}
+
+.detail-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Detail edit bar (shown in admin mode only) */
+.detail-edit-bar {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-edit-btn {
+  display: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: #e2cbb0;
+  color: #4a3b2d;
+}
+
+.detail-edit-btn:hover {
+  background: #d6ba9b;
+}
+
+/* When admin mode is enabled, show edit buttons */
+.admin-mode .detail-edit-btn {
+  display: inline-flex;
+}
+
+/* Notes editor */
+.detail-notes-editor {
+  width: 100%;
+  min-height: 120px;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #c2a878;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
 }

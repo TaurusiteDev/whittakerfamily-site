@@ -17,156 +17,214 @@
     </nav>
   </header>
 
+  <!-- Admin lock button (reuses .lock-btn styling) -->
+  <button id="family-admin-btn" class="lock-btn">🔒</button>
+
   <main>
     <section class="familytree-intro">
       <h2>Our Family Roots</h2>
       <p>
-        This page shows the Whittaker family tree across generations.
+        This page shows the Whittaker and Stanley families across generations.
         Click on a family member to see more details and notes about them.
       </p>
     </section>
 
     <section class="familytree-layout">
       <!-- LEFT: Tree diagram -->
-<div class="tree-panel">
-  <!-- Generation: Grandparents – Whittaker -->
-  <div class="generation">
-    <h3>Grandparents – Whittaker side</h3>
-    <div class="generation-row">
-      <div class="person-card" data-person="lesleyWhittaker">
-        <div class="person-name">Lesley Whittaker</div>
-        <div class="person-years">–</div>
-        <div class="person-role">Grandparent</div>
-      </div>
+      <div class="tree-panel">
+        <!-- Generation: Grandparents – Whittaker -->
+        <div class="generation">
+          <h3>Grandparents – Whittaker side</h3>
+          <div class="generation-row">
+            <div class="person-card" data-person="lesleyWhittaker">
+              <div class="person-avatar-wrapper">
+                <img class="person-avatar" src="images/default-avatar.png" alt="" />
+              </div>
+              <div class="person-name">Lesley Whittaker</div>
+              <div class="person-years">–</div>
+              <div class="person-role">Grandparent</div>
+            </div>
 
-      <div class="person-card" data-person="trevorWhittaker">
-        <div class="person-name">Trevor Whittaker</div>
-        <div class="person-years">–</div>
-        <div class="person-role">Grandparent</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Generation: Grandparents – Stanley -->
-  <div class="generation">
-    <h3>Grandparents – Stanley side</h3>
-    <div class="generation-row">
-      <div class="person-card" data-person="lorraineStanley">
-        <div class="person-name">Lorraine Stanley</div>
-        <div class="person-years">–</div>
-        <div class="person-role">Grandparent</div>
-      </div>
-
-      <div class="person-card" data-person="lesStanley">
-        <div class="person-name">Les Stanley</div>
-        <div class="person-years">–</div>
-        <div class="person-role">Grandparent</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Whittaker branch: Leanne & Mark with kids -->
-  <div class="generation">
-    <h3>Whittaker branch – Leanne &amp; Mark</h3>
-    <div class="generation-row">
-      <div class="family-unit">
-        <div class="family-parents">
-          <div class="person-card" data-person="markWhittaker">
-            <div class="person-name">Mark Whittaker</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Parent</div>
-          </div>
-
-          <div class="person-card" data-person="leanneWhittaker">
-            <div class="person-name">Leanne Whittaker</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Parent</div>
+            <div class="person-card" data-person="trevorWhittaker">
+              <div class="person-avatar-wrapper">
+                <img class="person-avatar" src="images/default-avatar.png" alt="" />
+              </div>
+              <div class="person-name">Trevor Whittaker</div>
+              <div class="person-years">–</div>
+              <div class="person-role">Grandparent</div>
+            </div>
           </div>
         </div>
 
-        <div class="family-children-label">Children</div>
-        <div class="family-children">
-          <div class="person-card" data-person="joe">
-            <div class="person-name">Joe</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
-          </div>
+        <!-- Generation: Grandparents – Stanley -->
+        <div class="generation">
+          <h3>Grandparents – Stanley side</h3>
+          <div class="generation-row">
+            <div class="person-card" data-person="lorraineStanley">
+              <div class="person-avatar-wrapper">
+                <img class="person-avatar" src="images/default-avatar.png" alt="" />
+              </div>
+              <div class="person-name">Lorraine Stanley</div>
+              <div class="person-years">–</div>
+              <div class="person-role">Grandparent</div>
+            </div>
 
-          <div class="person-card" data-person="lewis">
-            <div class="person-name">Lewis</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
+            <div class="person-card" data-person="lesStanley">
+              <div class="person-avatar-wrapper">
+                <img class="person-avatar" src="images/default-avatar.png" alt="" />
+              </div>
+              <div class="person-name">Les Stanley</div>
+              <div class="person-years">–</div>
+              <div class="person-role">Grandparent</div>
+            </div>
           </div>
+        </div>
 
-          <div class="person-card" data-person="charley">
-            <div class="person-name">Charley</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
+        <!-- Whittaker branch: Leanne & Mark with kids -->
+        <div class="generation">
+          <h3>Whittaker branch – Leanne &amp; Mark</h3>
+          <div class="generation-row">
+            <div class="family-unit">
+              <div class="family-parents">
+                <div class="person-card" data-person="markWhittaker">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Mark Whittaker</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Parent</div>
+                </div>
+
+                <div class="person-card" data-person="leanneWhittaker">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Leanne Whittaker</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Parent</div>
+                </div>
+              </div>
+
+              <div class="family-children-label">Children</div>
+              <div class="family-children">
+                <div class="person-card" data-person="joe">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Joe</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+
+                <div class="person-card" data-person="lewis">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Lewis</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+
+                <div class="person-card" data-person="charley">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Charley</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+
+                <div class="person-card" data-person="harrisson">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Harrisson</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+
+                <div class="person-card" data-person="finley">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Finley</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
 
-          <div class="person-card" data-person="harrisson">
-            <div class="person-name">Harrisson</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
-          </div>
+        <!-- Stanley branch: Matt & Jen with kids -->
+        <div class="generation">
+          <h3>Stanley branch – Matt &amp; Jen</h3>
+          <div class="generation-row">
+            <div class="family-unit">
+              <div class="family-parents">
+                <div class="person-card" data-person="matt">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Matt Stanley</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Parent</div>
+                </div>
 
-          <div class="person-card" data-person="finley">
-            <div class="person-name">Finley</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
+                <div class="person-card" data-person="jen">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Jen Stanley</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Parent</div>
+                </div>
+              </div>
+
+              <div class="family-children-label">Children</div>
+              <div class="family-children">
+                <div class="person-card" data-person="oliver">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Oliver</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+
+                <div class="person-card" data-person="jacob">
+                  <div class="person-avatar-wrapper">
+                    <img class="person-avatar" src="images/default-avatar.png" alt="" />
+                  </div>
+                  <div class="person-name">Jacob</div>
+                  <div class="person-years">–</div>
+                  <div class="person-role">Child</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Stanley branch: Matt & Jen with kids -->
-  <div class="generation">
-    <h3>Stanley branch – Matt &amp; Jen</h3>
-    <div class="generation-row">
-      <div class="family-unit">
-        <div class="family-parents">
-          <div class="person-card" data-person="matt">
-            <div class="person-name">Matt Stanley</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Parent</div>
-          </div>
-
-          <div class="person-card" data-person="jen">
-            <div class="person-name">Jen Stanley</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Parent</div>
-          </div>
-        </div>
-
-        <div class="family-children-label">Children</div>
-        <div class="family-children">
-          <div class="person-card" data-person="oliver">
-            <div class="person-name">Oliver</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
-          </div>
-
-          <div class="person-card" data-person="jacob">
-            <div class="person-name">Jacob</div>
-            <div class="person-years">–</div>
-            <div class="person-role">Child</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 
       <!-- RIGHT: Details panel -->
       <aside class="person-detail" id="person-detail">
+        <div class="detail-avatar-wrapper">
+          <img id="detail-avatar" class="detail-avatar" src="images/default-avatar.png" alt="" />
+        </div>
         <h2 id="detail-name">Select a family member</h2>
         <p id="detail-years" class="detail-years"></p>
         <p id="detail-relation" class="detail-relation"></p>
+
         <p id="detail-notes" class="detail-notes">
           Click a name on the left to see notes, stories and details about that person.
         </p>
+        <textarea id="detail-notes-editor" class="detail-notes-editor" style="display:none;"></textarea>
+
+        <div class="detail-edit-bar">
+          <button id="edit-notes-btn" class="detail-edit-btn">Edit bio</button>
+          <button id="change-photo-btn" class="detail-edit-btn">Change photo</button>
+          <input type="file" id="detail-photo-input" accept="image/*" style="display:none;" />
+        </div>
       </aside>
     </section>
   </main>
@@ -175,124 +233,7 @@
     <p>© 2025 The Whittaker Family</p>
   </footer>
 
-  <script>
-    // Family data – you can customise notes and years later
-    const FAMILY_DATA = {
-      lesleyWhittaker: {
-        name: "Lesley Whittaker",
-        years: "–",
-        relation: "Grandparent (Whittaker side)",
-        notes: "Grandparent of Mark. Add favourite memories, personality, and stories here."
-      },
-      trevorWhittaker: {
-        name: "Trevor Whittaker",
-        years: "–",
-        relation: "Grandparent (Whittaker side)",
-        notes: "Grandparent of Mark. You can add details about their life, work, and family traditions."
-      },
-      lorraineStanley: {
-        name: "Lorraine Stanley",
-        years: "–",
-        relation: "Grandparent (Stanley side)",
-        notes: "Grandparent of Leanne and Matt. Add stories about Lorraine and her side of the family."
-      },
-      lesStanley: {
-        name: "Les Stanley",
-        years: "–",
-        relation: "Grandparent (Stanley side)",
-        notes: "Grandparent of Leanne and Matt. Add memories and family history here."
-      },
-      markWhittaker: {
-        name: "Mark Whittaker",
-        years: "–",
-        relation: "Parent of Joe, Lewis, Charley, Harrisson and Finley",
-        notes: "Child of Lesley and Trevor. Add details about Mark’s life, career, and favourite family moments."
-      },
-      leanneWhittaker: {
-        name: "Leanne Whittaker",
-        years: "–",
-        relation: "Parent of Joe, Lewis, Charley, Harrisson and Finley",
-        notes: "Child of Lorraine and Les. Add notes about Leanne, including memories from both the Stanley and Whittaker sides."
-      },
-      matt: {
-        name: "Matt",
-        years: "–",
-        relation: "Parent of Oliver and Jacob",
-        notes: "Child of Lorraine and Les. Add details about Matt and his family branch here."
-      },
-      jen: {
-        name: "Jen",
-        years: "–",
-        relation: "Parent of Oliver and Jacob",
-        notes: "Add Jen’s story, hobbies, and favourite family memories."
-      },
-      joe: {
-        name: "Joe",
-        years: "–",
-        relation: "Child of Leanne and Mark",
-        notes: "Add Joe’s personality, milestones, and favourite stories."
-      },
-      lewis: {
-        name: "Lewis",
-        years: "–",
-        relation: "Child of Leanne and Mark",
-        notes: "Add notes about Lewis – hobbies, character, and memories."
-      },
-      charley: {
-        name: "Charley",
-        years: "–",
-        relation: "Child of Leanne and Mark",
-        notes: "Add Charley’s story here, and any fun family anecdotes."
-      },
-      harrisson: {
-        name: "Harrisson",
-        years: "–",
-        relation: "Child of Leanne and Mark",
-        notes: "Add details about Harrisson – personality, interests, and memories."
-      },
-      finley: {
-        name: "Finley",
-        years: "–",
-        relation: "Child of Leanne and Mark",
-        notes: "Add Finley’s story and milestones here."
-      },
-      oliver: {
-        name: "Oliver",
-        years: "–",
-        relation: "Child of Matt and Jen",
-        notes: "Add Oliver’s details. You could also link this later to an album of Oliver’s photos."
-      },
-      jacob: {
-        name: "Jacob",
-        years: "–",
-        relation: "Child of Matt and Jen",
-        notes: "Add Jacob’s story, fun facts, and favourite memories."
-      }
-    };
-
-    const detailName = document.getElementById("detail-name");
-    const detailYears = document.getElementById("detail-years");
-    const detailRelation = document.getElementById("detail-relation");
-    const detailNotes = document.getElementById("detail-notes");
-    const cards = document.querySelectorAll(".person-card");
-
-    cards.forEach(card => {
-      card.addEventListener("click", () => {
-        const id = card.dataset.person;
-        const data = FAMILY_DATA[id];
-        if (!data) return;
-
-        // Update detail panel
-        detailName.textContent = data.name;
-        detailYears.textContent = data.years || "";
-        detailRelation.textContent = data.relation || "";
-        detailNotes.textContent = data.notes || "";
-
-        // Highlight selection
-        cards.forEach(c => c.classList.remove("person-selected"));
-        card.classList.add("person-selected");
-      });
-    });
-  </script>
+  <!-- New: dedicated family tree script (Firebase + admin + editing) -->
+  <script type="module" src="js/familytree.js"></script>
 </body>
 </html>
