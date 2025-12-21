@@ -60,11 +60,11 @@
         <div class="generation">
           <h3>Grandparents – Stanley side</h3>
           <div class="generation-row">
-            <div class="person-card" data-person="lorraineStanley">
+            <div class="person-card" data-person="larraineStanley">
               <div class="person-avatar-wrapper">
                 <img class="person-avatar" src="images/default-avatar.png" alt="" />
               </div>
-              <div class="person-name">Lorraine Stanley</div>
+              <div class="person-name">Larraine Stanley</div>
               <div class="person-years">–</div>
               <div class="person-role">Grandparent</div>
             </div>
@@ -214,6 +214,43 @@
         <h2 id="detail-name">Select a family member</h2>
         <p id="detail-years" class="detail-years"></p>
         <p id="detail-relation" class="detail-relation"></p>
+        <p id="detail-birthday" class="detail-birthday"></p>
+
+<p id="detail-birthday" class="detail-birthday"></p>
+
+<div class="detail-birthday-edit" style="display:none;">
+  <label class="birthday-label">Birthday</label>
+
+  <div class="birthday-md">
+    <select id="birthday-month">
+      <option value="">Month</option>
+      <option value="01">Jan</option>
+      <option value="02">Feb</option>
+      <option value="03">Mar</option>
+      <option value="04">Apr</option>
+      <option value="05">May</option>
+      <option value="06">Jun</option>
+      <option value="07">Jul</option>
+      <option value="08">Aug</option>
+      <option value="09">Sep</option>
+      <option value="10">Oct</option>
+      <option value="11">Nov</option>
+      <option value="12">Dec</option>
+    </select>
+
+    <select id="birthday-day">
+      <option value="">Day</option>
+      <!-- JS will fill 1–31 -->
+    </select>
+  </div>
+
+  <button id="save-birthday-btn" class="detail-edit-btn">
+    Save birthday
+  </button>
+</div>
+
+
+
 
         <p id="detail-notes" class="detail-notes">
           Click a name on the left to see notes, stories and details about that person.

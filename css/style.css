@@ -1310,3 +1310,64 @@ footer {
   font-size: 0.95rem;
   resize: vertical;
 }
+
+.detail-birthday {
+  font-size: 0.9rem;
+  color: #7a6a59;
+  margin-top: 0.25rem;
+}
+
+.detail-birthday-edit {
+  margin-top: 0.6rem;
+  display: none;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.detail-birthday-edit input[type="date"] {
+  border: 1px solid #c2a878;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  font-family: inherit;
+}
+
+.birthday-widget {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.25rem 1.5rem;
+  background: #fffdf8;
+  border-radius: 14px;
+  border: 1px solid #e1d2c2;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.birthday-widget h2 {
+  margin-top: 0;
+}
+
+.birthday-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.birthday-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  background: #fef7ee;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.birthday-item.today {
+  background: #fff1cc;
+  border-color: rgba(199,164,107,0.6);
+  font-weight: bold;
+}
+
+.birthday-md {
+  display: flex;
+  gap: 0.5rem;
+}

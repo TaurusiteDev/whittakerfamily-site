@@ -41,25 +41,9 @@ let adminUnlocked = false;
 
 const adminBtn = document.getElementById("family-admin-btn");
 
-adminBtn?.addEventListener("click", () => {
-  if (!adminUnlocked) {
-    const pwd = prompt("Enter admin password:");
-    if (pwd !== ADMIN_PASSWORD) {
-      alert("Incorrect password.");
-      return;
-    }
-    adminUnlocked = true;
-    adminBtn.textContent = "🔓";
-    document.body.classList.add("admin-mode");
-  } else {
-    adminUnlocked = false;
-    adminBtn.textContent = "🔒";
-    document.body.classList.remove("admin-mode");
-  }
-});
-
 // ===============================
 // Base Family Data (fallback)
+// IMPORTANT: ids here must match the HTML data-person values
 // ===============================
 const BASE_FAMILY_DATA = {
   lesleyWhittaker: {
@@ -74,18 +58,22 @@ const BASE_FAMILY_DATA = {
     relation: "Grandparent (Whittaker side)",
     notes: "You can add details about their life, work, and family traditions."
   },
-  lorraineStanley: {
-    name: "Lorraine Stanley",
+
+  
+  larraineStanley: {
+    name: "Larraine Stanley",
     years: "–",
     relation: "Grandparent (Stanley side)",
-    notes: "Grandparent of Leanne and Matt. Add stories about Lorraine and her side of the family."
+    notes: "Grandparent of Leanne and Matt. Add stories about Larraine and her side of the family."
   },
+
   lesStanley: {
     name: "Les Stanley",
     years: "–",
     relation: "Grandparent (Stanley side)",
     notes: "Grandparent of Leanne and Matt. Add memories and family history here."
   },
+
   markWhittaker: {
     name: "Mark Whittaker",
     years: "–",
@@ -96,13 +84,14 @@ const BASE_FAMILY_DATA = {
     name: "Leanne Whittaker",
     years: "–",
     relation: "Parent of Joe, Lewis, Charley, Harrisson and Finley",
-    notes: "Child of Lorraine and Les. Add notes about Leanne and memories from both the Stanley and Whittaker sides."
+    notes: "Child of Larraine and Les. Add notes about Leanne and memories from both the Stanley and Whittaker sides."
   },
+
   matt: {
     name: "Matt Stanley",
     years: "–",
     relation: "Parent of Oliver and Jacob (Stanley branch)",
-    notes: "Child of Lorraine and Les. Add details about Matt and the Stanley family line here."
+    notes: "Child of Larraine and Les. Add details about Matt and the Stanley family line here."
   },
   jen: {
     name: "Jen Stanley",
@@ -110,51 +99,18 @@ const BASE_FAMILY_DATA = {
     relation: "Parent of Oliver and Jacob (Stanley branch)",
     notes: "Add Jen’s story, hobbies, and favourite family memories."
   },
-  joe: {
-    name: "Joe",
-    years: "–",
-    relation: "Child of Leanne and Mark",
-    notes: "Add Joe’s personality, milestones, and favourite stories."
-  },
-  lewis: {
-    name: "Lewis",
-    years: "–",
-    relation: "Child of Leanne and Mark",
-    notes: "Add notes about Lewis – hobbies, character, and memories."
-  },
-  charley: {
-    name: "Charley",
-    years: "–",
-    relation: "Child of Leanne and Mark",
-    notes: "Add Charley’s story here, and any fun family anecdotes."
-  },
-  harrisson: {
-    name: "Harrisson",
-    years: "–",
-    relation: "Child of Leanne and Mark",
-    notes: "Add details about Harrisson – personality, interests, and memories."
-  },
-  finley: {
-    name: "Finley",
-    years: "–",
-    relation: "Child of Leanne and Mark",
-    notes: "Add Finley’s story and milestones here."
-  },
-  oliver: {
-    name: "Oliver",
-    years: "–",
-    relation: "Child of Matt and Jen (Stanley branch)",
-    notes: "Add Oliver’s details. You could also link this later to an album of Oliver’s photos."
-  },
-  jacob: {
-    name: "Jacob",
-    years: "–",
-    relation: "Child of Matt and Jen (Stanley branch)",
-    notes: "Add Jacob’s story, fun facts, and favourite memories."
-  }
+
+  joe: { name: "Joe Whittaker", years: "–", relation: "Child of Leanne and Mark", notes: "Add Joe’s personality, milestones, and favourite stories." },
+  lewis: { name: "Lewis Whittaker", years: "–", relation: "Child of Leanne and Mark", notes: "Add notes about Lewis – hobbies, character, and memories." },
+  charley: { name: "Charley Whittaker", years: "–", relation: "Child of Leanne and Mark", notes: "Add Charley’s story here, and any fun family anecdotes." },
+  harrisson: { name: "Harrisson Whittaker", years: "–", relation: "Child of Leanne and Mark", notes: "Add details about Harrisson – personality, interests, and memories." },
+  finley: { name: "Finley Whittaker", years: "–", relation: "Child of Leanne and Mark", notes: "Add Finley’s story and milestones here." },
+
+  oliver: { name: "Oliver Stanley", years: "–", relation: "Child of Matt and Jen (Stanley branch)", notes: "Add Oliver’s details. You could also link this later to an album of Oliver’s photos." },
+  jacob: { name: "Jacob Stanley", years: "–", relation: "Child of Matt and Jen (Stanley branch)", notes: "Add Jacob’s story, fun facts, and favourite memories." }
 };
 
-// This will become: base data + anything saved in Firestore
+// This becomes: base data + anything saved in Firestore
 const FAMILY_DATA = structuredClone(BASE_FAMILY_DATA);
 
 // ===============================
@@ -172,7 +128,50 @@ const editNotesBtn = document.getElementById("edit-notes-btn");
 const changePhotoBtn = document.getElementById("change-photo-btn");
 const detailPhotoInput = document.getElementById("detail-photo-input");
 
+// Birthday UI (Option A)
+const detailBirthday = document.getElementById("detail-birthday");
+const birthdayEditWrap = document.querySelector(".detail-birthday-edit");
+const birthdayMonthSelect = document.getElementById("birthday-month");
+const birthdayDaySelect = document.getElementById("birthday-day");
+const saveBirthdayBtn = document.getElementById("save-birthday-btn");
+
+// State
 let currentPersonId = null;
+
+// Populate day dropdown (1–31)
+if (birthdayDaySelect && birthdayDaySelect.options.length <= 1) {
+  for (let d = 1; d <= 31; d++) {
+    const opt = document.createElement("option");
+    opt.value = String(d).padStart(2, "0");
+    opt.textContent = String(d);
+    birthdayDaySelect.appendChild(opt);
+  }
+}
+
+// ===============================
+// Admin toggle (FIXED)
+// ===============================
+adminBtn?.addEventListener("click", () => {
+  if (!adminUnlocked) {
+    const pwd = prompt("Enter admin password:");
+    if (pwd !== ADMIN_PASSWORD) {
+      alert("Incorrect password.");
+      return;
+    }
+    adminUnlocked = true;
+    adminBtn.textContent = "🔓";
+    document.body.classList.add("admin-mode");
+  } else {
+    adminUnlocked = false;
+    adminBtn.textContent = "🔒";
+    document.body.classList.remove("admin-mode");
+  }
+
+  // If a person is already selected, update birthday editor visibility
+  if (birthdayEditWrap) {
+    birthdayEditWrap.style.display = adminUnlocked && currentPersonId ? "block" : "none";
+  }
+});
 
 // ===============================
 // Firestore: load saved member data
@@ -185,9 +184,7 @@ async function loadFamilyData() {
     snapshot.forEach((docSnap) => {
       const id = docSnap.id;
       const data = docSnap.data();
-      if (!FAMILY_DATA[id]) {
-        FAMILY_DATA[id] = {};
-      }
+      if (!FAMILY_DATA[id]) FAMILY_DATA[id] = {};
       Object.assign(FAMILY_DATA[id], data);
     });
 
@@ -216,6 +213,14 @@ function applyAvatarsToCards() {
   });
 }
 
+function formatBirthday(md) {
+  if (!md || typeof md !== "string") return "";
+  const [mm, dd] = md.split("-").map(Number);
+  if (!mm || !dd) return "";
+  const d = new Date(2000, mm - 1, dd);
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+}
+
 function renderPersonDetail(id) {
   currentPersonId = id;
   const data = FAMILY_DATA[id] || {};
@@ -224,18 +229,43 @@ function renderPersonDetail(id) {
   detailYears.textContent = data.years || "";
   detailRelation.textContent = data.relation || "";
   detailNotes.textContent = data.notes || "No bio added yet. (Admin can edit this.)";
+
   detailAvatar.src = getAvatarUrlFor(id);
   detailAvatar.alt = data.name || "Family member";
 
-  // Reset editor state
+  // Reset bio editor
   detailNotes.style.display = "block";
   detailNotesEditor.style.display = "none";
   detailNotesEditor.value = data.notes || "";
+  editNotesBtn.textContent = "Edit bio";
 
   // Highlight selected card
   cards.forEach((c) => c.classList.remove("person-selected"));
   const selected = Array.from(cards).find((c) => c.dataset.person === id);
   selected?.classList.add("person-selected");
+
+  // Birthday display
+  if (detailBirthday) {
+    const bday = data.birthday || "";
+    detailBirthday.textContent = bday ? `Birthday: ${formatBirthday(bday)}` : "";
+  }
+
+  // Birthday editor: show only in admin mode
+  if (birthdayEditWrap) {
+    birthdayEditWrap.style.display = adminUnlocked ? "block" : "none";
+  }
+
+  // Set dropdown values
+  if (birthdayMonthSelect && birthdayDaySelect) {
+    if (data.birthday) {
+      const [mm, dd] = data.birthday.split("-");
+      birthdayMonthSelect.value = mm;
+      birthdayDaySelect.value = dd;
+    } else {
+      birthdayMonthSelect.value = "";
+      birthdayDaySelect.value = "";
+    }
+  }
 }
 
 // ===============================
@@ -245,7 +275,6 @@ cards.forEach((card) => {
   card.addEventListener("click", () => {
     const id = card.dataset.person;
     if (!id) return;
-    // Ensure we have at least base data
     if (!FAMILY_DATA[id]) FAMILY_DATA[id] = BASE_FAMILY_DATA[id] || { name: id };
     renderPersonDetail(id);
   });
@@ -264,7 +293,6 @@ editNotesBtn?.addEventListener("click", async () => {
     return;
   }
 
-  // If editor is hidden -> switch to edit mode
   const editing = detailNotesEditor.style.display === "block";
 
   if (!editing) {
@@ -273,34 +301,31 @@ editNotesBtn?.addEventListener("click", async () => {
     detailNotes.style.display = "none";
     detailNotesEditor.style.display = "block";
     editNotesBtn.textContent = "Save bio";
-  } else {
-    // Save changes
-    const newNotes = detailNotesEditor.value.trim();
-    try {
-      await setDoc(
-        doc(db, "familyMembers", currentPersonId),
-        {
-          notes: newNotes,
-          name: FAMILY_DATA[currentPersonId]?.name || "",
-          years: FAMILY_DATA[currentPersonId]?.years || "",
-          relation: FAMILY_DATA[currentPersonId]?.relation || ""
-        },
-        { merge: true }
-      );
+    return;
+  }
 
-      FAMILY_DATA[currentPersonId] = {
-        ...FAMILY_DATA[currentPersonId],
-        notes: newNotes
-      };
+  // Save
+  const newNotes = detailNotesEditor.value.trim();
 
-      detailNotes.textContent = newNotes || "No bio added yet. (Admin can edit this.)";
-      detailNotes.style.display = "block";
-      detailNotesEditor.style.display = "none";
-      editNotesBtn.textContent = "Edit bio";
-    } catch (err) {
-      console.error("Failed to save bio:", err);
-      alert("Failed to save bio. Please try again.");
-    }
+  try {
+    await setDoc(
+      doc(db, "familyMembers", currentPersonId),
+      { notes: newNotes },
+      { merge: true }
+    );
+
+    FAMILY_DATA[currentPersonId] = {
+      ...FAMILY_DATA[currentPersonId],
+      notes: newNotes
+    };
+
+    detailNotes.textContent = newNotes || "No bio added yet. (Admin can edit this.)";
+    detailNotes.style.display = "block";
+    detailNotesEditor.style.display = "none";
+    editNotesBtn.textContent = "Edit bio";
+  } catch (err) {
+    console.error("Failed to save bio:", err);
+    alert("Failed to save bio. Please try again.");
   }
 });
 
@@ -323,7 +348,6 @@ detailPhotoInput?.addEventListener("change", async () => {
   const file = detailPhotoInput.files?.[0];
   if (!file || !currentPersonId) return;
 
-  // Simple checks
   const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
   if (!ALLOWED.includes(file.type)) {
     alert("Please upload a JPG, PNG or WEBP image.");
@@ -347,7 +371,7 @@ detailPhotoInput?.addEventListener("change", async () => {
       }
     }
 
-    // Store under gallery/familyTree/... so it fits your existing Storage rules
+    // Store under gallery/familyTree/...
     const storagePath = `gallery/familyTree/${currentPersonId}-${Date.now()}-${file.name}`;
     const fileRef = ref(storage, storagePath);
     await uploadBytes(fileRef, file);
@@ -355,14 +379,7 @@ detailPhotoInput?.addEventListener("change", async () => {
 
     await setDoc(
       doc(db, "familyMembers", currentPersonId),
-      {
-        imageUrl: url,
-        imagePath: storagePath,
-        name: FAMILY_DATA[currentPersonId]?.name || "",
-        years: FAMILY_DATA[currentPersonId]?.years || "",
-        relation: FAMILY_DATA[currentPersonId]?.relation || "",
-        notes: FAMILY_DATA[currentPersonId]?.notes || ""
-      },
+      { imageUrl: url, imagePath: storagePath },
       { merge: true }
     );
 
@@ -372,7 +389,6 @@ detailPhotoInput?.addEventListener("change", async () => {
       imagePath: storagePath
     };
 
-    // Update UI
     applyAvatarsToCards();
     renderPersonDetail(currentPersonId);
   } catch (err) {
@@ -380,6 +396,48 @@ detailPhotoInput?.addEventListener("change", async () => {
     alert("Failed to update photo. Please try again.");
   } finally {
     detailPhotoInput.value = "";
+  }
+});
+
+// ===============================
+// Save birthday (Option A - Month/Day)
+// ===============================
+saveBirthdayBtn?.addEventListener("click", async () => {
+  if (!adminUnlocked) {
+    alert("Admin mode required.");
+    return;
+  }
+  if (!currentPersonId) {
+    alert("Select a family member first.");
+    return;
+  }
+
+  const mm = birthdayMonthSelect?.value || "";
+  const dd = birthdayDaySelect?.value || "";
+
+  if (!mm || !dd) {
+    alert("Please select both month and day.");
+    return;
+  }
+
+  const birthday = `${mm}-${dd}`;
+
+  try {
+    await setDoc(
+      doc(db, "familyMembers", currentPersonId),
+      { birthday },
+      { merge: true }
+    );
+
+    FAMILY_DATA[currentPersonId] = {
+      ...FAMILY_DATA[currentPersonId],
+      birthday
+    };
+
+    renderPersonDetail(currentPersonId);
+  } catch (err) {
+    console.error("Failed to save birthday:", err);
+    alert("Failed to save birthday.");
   }
 });
 

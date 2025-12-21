@@ -40,7 +40,7 @@ const db = getFirestore(app);
 // ===============================
 // Gallery Password Lock
 // ===============================
-const GALLERY_PASSWORD = "1234";
+const GALLERY_PASSWORD = "Gavin&Stacey";
 const lockScreen = document.getElementById("gallery-lock");
 const albumGridWrapper = document.getElementById("album-grid");
 const uploadForm = document.querySelector(".upload-form");
@@ -69,7 +69,7 @@ document.getElementById("unlock-gallery-btn")?.addEventListener("click", () => {
 // ===============================
 // Admin Password
 // ===============================
-const ADMIN_PASSWORD = "1234";
+const ADMIN_PASSWORD = "1640";
 let adminUnlocked = false;
 
 // ===============================
