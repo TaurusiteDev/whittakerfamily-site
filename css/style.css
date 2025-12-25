@@ -1018,6 +1018,34 @@ footer {
   }
 }
 
+.album-delete-btn {
+  display: none;               /* hidden by default */
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid #c58a8a;
+  background: rgba(255,255,255,0.9);
+  color: #b54141;
+  font-size: 18px;
+  line-height: 28px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 5;
+}
+
+body.admin-mode .album-delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.album-delete-btn:hover {
+  transform: scale(1.05);
+}
+
 
 /* ===========================
    Family Tree Layout

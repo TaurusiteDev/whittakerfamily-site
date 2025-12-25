@@ -137,6 +137,54 @@ function showToast(msg) {
   setTimeout(() => el.remove(), 3500);
 }
 
+async function deleteAlbum(albumName) {
+  // All photos in this album
+  const photosToDelete = photosCache.filter(
+    (p) => (p.album || "Family Album") === albumName
+  );
+
+  if (!photosToDelete.length) {
+    showToast("Album is already empty.");
+    return;
+  }
+
+  // Optional: show a stronger confirm message
+  const ok = confirm(
+    `Delete the album "${albumName}" and all ${photosToDelete.length} photo(s)?\n\nThis cannot be undone.`
+  );
+  if (!ok) return;
+
+  try {
+    // Delete sequentially (safer vs rate limits)
+    for (const p of photosToDelete) {
+      // Delete file from Storage (if path exists)
+      if (p.path) {
+        try {
+          await deleteObject(ref(storage, p.path));
+        } catch (err) {
+          console.warn("Storage delete failed (continuing):", err);
+        }
+      }
+
+      // Delete Firestore doc
+      await deleteDoc(doc(db, "photos", p.id));
+    }
+
+    // If we were viewing this album, exit back to albums
+    if (currentAlbum === albumName) {
+      currentAlbum = null;
+      albumViewEl.classList.add("hidden");
+      albumListEl.parentElement.classList.remove("hidden");
+    }
+
+    showToast(`Album "${albumName}" deleted.`);
+  } catch (err) {
+    console.error("Failed to delete album:", err);
+    alert("Failed to delete album. Please try again.");
+  }
+}
+
+
 // ===============================
 // Admin Lock Button
 // ===============================
@@ -350,9 +398,15 @@ function renderAlbumsFromCache() {
 
   for (const [name, items] of albumsMap.entries()) {
     const card = document.createElement("div");
-card.className = "album-card";
-card.dataset.album = name;
-card.innerHTML = `
+    card.className = "album-card";
+    card.dataset.album = name;
+
+    // ✅ NEW: delete button added here
+   card.innerHTML = `
+  <button class="album-delete-btn"
+          title="Delete album"
+          aria-label="Delete album">×</button>
+
   <div class="album-cover">
     <div class="album-cover-spine"></div>
     <div class="album-cover-front">
@@ -362,13 +416,14 @@ card.innerHTML = `
       </div>
     </div>
   </div>
-`;
-albumListEl.appendChild(card);
+    `;
 
+    albumListEl.appendChild(card);
   }
 
   return albumsMap;
 }
+
 
 function renderAlbumView(name, items) {
   if (!name || !items) return;
@@ -518,22 +573,39 @@ onSnapshot(q, (snapshot) => {
 
 
   // Click album cards
-  albumListEl.addEventListener("click", (e) => {
-    const card = e.target.closest(".album-card");
-    if (!card) return;
-    const albumName = card.dataset.album;
-    if (!albumName) return;
+  albumListEl.addEventListener("click", async (e) => {
+  const card = e.target.closest(".album-card");
+  if (!card) return;
 
-    const albumsMap = new Map();
-    for (const p of photosCache) {
-      const name = p.album || "Family Album";
-      if (!albumsMap.has(name)) albumsMap.set(name, []);
-      albumsMap.get(name).push(p);
+  const albumName = card.dataset.album;
+  if (!albumName) return;
+
+  // If delete button clicked
+  if (e.target.closest(".album-delete-btn")) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!adminUnlocked) {
+      alert("Admin mode required.");
+      return;
     }
 
-    const items = albumsMap.get(albumName) || [];
-    renderAlbumView(albumName, items);
-  });
+    await deleteAlbum(albumName);
+    return;
+  }
+
+  // Normal open album behaviour
+  const albumsMap = new Map();
+  for (const p of photosCache) {
+    const name = p.album || "Family Album";
+    if (!albumsMap.has(name)) albumsMap.set(name, []);
+    albumsMap.get(name).push(p);
+  }
+
+  const items = albumsMap.get(albumName) || [];
+  renderAlbumView(albumName, items);
+});
+
 
   // Back to albums
   backToAlbumsBtn?.addEventListener("click", () => {

@@ -20,14 +20,19 @@ const WINDOW_DAYS = 30;
 
 // Fallback display names (used if Firestore name is missing / only first name)
 const DISPLAY_NAME_OVERRIDES = {
-  // Whittaker kids
+  // Whittaker family
+  leanne: "Leanne Whittaker",
+  mark: "Mark Whittaker",
   joe: "Joe Whittaker",
   lewis: "Lewis Whittaker",
   charley: "Charley Whittaker",
   harrisson: "Harrisson Whittaker",
   finley: "Finley Whittaker",
 
-  // Stanley kids
+  // Stanley family
+  les: "Les Stanley",
+  matt: "Matt Stanley",
+  jen: "Jen Stanley",
   oliver: "Oliver Stanley",
   jacob: "Jacob Stanley"
 };
